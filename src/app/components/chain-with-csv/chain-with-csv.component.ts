@@ -30,7 +30,8 @@ export class ChainWithCSVComponent implements OnInit {
             set: set,
             child: child,
             parent: parent,
-            displayName: displayName
+            displayName: displayName,
+            sameSiblings: [],
           };
         }).filter(it => parseInt(it.set) === this.set);
         this.chainModel = this.constructParentAndChild(this.extractCSVModel);
@@ -44,12 +45,18 @@ export class ChainWithCSVComponent implements OnInit {
       return [];
     }
     const result = items.reduce((previous: any, current: any) => {
+      current = Object.assign({}, current);
       const parent = current.parent;
       const child = current.child;
       current.children = [];
       previous[parent] = previous[parent] ? previous[parent] : {};
       previous[parent].children = previous[parent].children ? previous[parent].children : [];
       previous[parent].children.push(current);
+      if (previous[child] && Object.keys(previous[child]).length > 0) {
+        const previousParent = previous[child].parent;
+        previous[previousParent].sameSiblings.push(child);
+        previous[parent].sameSiblings.push(child);
+      }
       previous[child] = current;
       return previous;
     }, {});

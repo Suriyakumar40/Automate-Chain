@@ -13,12 +13,23 @@ export class ChildrenElementWithCSVComponent implements OnInit {
     public showTreeBroken = false;
     public showChildTreeBroken = false;
     public propertyNumberType = 'Survey Number';
-    public isMerge: boolean = false;
+    public isSameSibling: boolean = false;
+    public siblingParents: Array<any> = [];
+    public siblingChilds: Array<any> = [];
 
     constructor(private activatedRoute: ActivatedRoute, router: Router) {
     }
 
     ngOnInit(): void {
+        if (this.data && this.data.children && this.data.children.length > 0) {
+            this.siblingParents = this.data.children.filter((it: any) => it.sameSiblings && it.sameSiblings.length > 0);
+            if (this.siblingParents && this.siblingParents.length > 0) {
+                this.isSameSibling = true;
+                const lastSiblingParent = this.siblingParents[this.siblingParents.length - 1];
+                this.siblingChilds = lastSiblingParent.children.filter((it: any) =>
+                    lastSiblingParent.sameSiblings.some((last: any) => last === it.child));
+            }
+        }
     }
 
     counter(length: number) {
