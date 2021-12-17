@@ -2,10 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'chain', pathMatch: 'full' },
+  { path: '', redirectTo: 'chain-with-csv', pathMatch: 'full' },
   {
     path: 'chain',
     loadChildren: () => import('./components/chain/chain.module').then(m => m.ChainModule)
+  },
+  {
+    path: 'chain-with-csv',
+    loadChildren: () => import('./components/chain-with-csv/chain-with-csv.module').then(m => m.ChainWithCSVModule)
   },
 ]
 

@@ -1,0 +1,64 @@
+<table cellpadding="0" cellspacing="0">
+    <tr class="lines" *ngIf="data.children.length > 0">
+        <td class="rightLine">&nbsp;</td>
+        <td class="{{pIndex % 2 == 0 ? 'leftLine' : 'rightLine'}} topLine"
+            *ngFor="let item of counter(data.children ? data.children.length : 0);let pIndex=index">
+            &nbsp;
+        </td>
+        <td class="leftLine">&nbsp;</td>
+    </tr>
+    <tr class="nodes xyz-child" *ngIf="data.children.length > 0">
+        <td colspan="2" *ngFor="let child of data.children;let c1Index=index; first as isFirst; last as isLast">
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <div class="node">
+                            <span class="office"></span>
+                            <div class="title">&nbsp; </div>
+                            <div class="content">{{child.displayName}}</div>
+                            <i class="edge verticalEdge bottomEdge fa"></i>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="lines" *ngIf="child.children.length > 0">
+                    <td colspan="2">
+                        <div class="downLine"></div>
+                    </td>
+                </tr>
+                <tr class="lines">
+                    <td colspan="2" [ngClass]='{"topLine": true}'></td>
+                    <td colspan="2" [ngClass]='{"topLine": true}'></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div class="node"><span class="office"></span>
+                                        <div class="title">&nbsp; </div>
+                                        <div class="content">D</div><i class="edge verticalEdge bottomEdge fa"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- <tr>
+                    <td>
+                        <app-children-with-csv-element class="chilnode" [data]="child">
+                        </app-children-with-csv-element>
+                    </td>
+                </tr> -->
+            </table>
+        </td>
+    </tr>
+   
+    <!-- <tr class="merge_{{data.displayName}}">
+        <td colspan="12">
+            <div class="node"><span class="office"></span>
+                <div class="title">&nbsp; </div>
+                <div class="content">D</div><i class="edge verticalEdge bottomEdge fa"></i>
+            </div>
+        </td>
+    </tr> -->
+</table>

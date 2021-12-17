@@ -1,0 +1,67 @@
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    <div id="chart-container" class="tree" style="overflow-x:auto;padding-top: 0px;">
+        <div class="orgchart">
+            <table>
+                <tr>
+                    <td>
+                        <div class="node">
+                            <span class="office"></span>
+                            <div class="title"> &nbsp;
+                            </div>
+                            <div class="content">
+                                Before {{ecStartDate}} - Online Data not available
+                            </div>
+                            <i class="edge verticalEdge bottomEdge fa"></i>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="lines">
+                    <td>
+                        <div class="downLine"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr class="lines" *ngIf="chainModel && chainModel.length > 1 && showChainDefaultHeader">
+                                <td class="rightLine">&nbsp;</td>
+                                <td class="{{pIndex % 2 == 0 ? 'leftLine' : 'rightLine'}} topLine"
+                                    *ngFor="let item of counter(chainModel ? chainModel.length : 0);let pIndex=index">
+                                    &nbsp;</td>
+                                <td class="leftLine">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" *ngFor="let parent of chainModel;let colIndex=index">
+                                    <table>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="node">
+                                                    <span class="office"></span>
+                                                    <div class="title">&nbsp;
+                                                    </div>
+                                                    <div class="content">{{parent.displayName}}</div>
+                                                    <i class="edge verticalEdge bottomEdge fa"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="lines" *ngIf="parent.children && parent.children.length > 0">
+                                            <td class="rightLine">&nbsp;</td>
+                                            <td class="leftLine">&nbsp;</td>
+                                        </tr>
+                                        <tr style="page-break-inside: avoid;" class="nodes xyz-parent"
+                                            *ngIf="parent.children && parent.children.length > 0">
+                                            <td colspan="2">
+                                                <app-children-with-csv-element class="parnode" [data]="parent">
+                                                </app-children-with-csv-element>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
