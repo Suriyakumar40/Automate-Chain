@@ -1,0 +1,106 @@
+<!-- Broken chain dom elements -->
+<table cellpadding="0" cellspacing="0">
+    <tr *ngIf="showTreeBroken">
+        <td [colSpan]="(data.Children.length == 0 ? 1 : data.Children.length) * 2">
+            <div class="{{chainColumnWrapEnabled ? 'node node-col-wrap' : 'node'}}">
+                <span class="office"></span>
+                <div class="title titleBroken">
+                    <!-- <i class="fa fa-users symbol"></i> -->&nbsp;
+                </div>
+                <div class="content contentBroken">{{data.ExecutantName}}</div>
+                <i class="edge verticalEdge bottomEdge fa"></i>
+            </div>
+        </td>
+    </tr>
+    <tr class="lines" *ngIf="showTreeBroken">
+        <td [colSpan]="(data.Children.length == 0 ? 1 : data.Children.length) * 2">
+            <div class="downline"></div>
+        </td>
+    </tr>
+    <tr class="lines" *ngIf="showTreeBroken">
+        <td class="rightLine">&nbsp;</td>
+        <td class="{{pIndex % 2 == 0 ? 'leftLine' : 'rightLine'}} topLine"
+            *ngFor="let item of counter(data.Children ? data.Children.length : 0);let pIndex=index">
+            &nbsp;
+        </td>
+        <td class="leftLine">&nbsp;</td>
+    </tr>
+    <tr>
+        <td [colSpan]="(data.Children.length == 0 ? 1 : data.Children.length) * 2">
+            <div class="{{chainColumnWrapEnabled ? 'node node-col-wrap' : 'node'}}">
+                <span class="office">
+                    {{data.DateOfRegistration}} ({{data.DocumentNumber}})
+                </span>
+                <div class="title">
+                    By {{data.TransactionNature}}
+                </div>
+                <div>
+                    <div class="content"
+                        style="border-bottom:0;border-bottom-left-radius: 0;border-bottom-right-radius: 0">
+                        <div class="word-break: break-all;">
+                            <b> Size: </b> {{data.ChainPropertySize}}
+                        </div>
+                        <div>
+                            <b> {{propertyNumberType}} : </b> {{data.SurveyNumbers}}
+                        </div>
+                        <div class="word-break: break-all;">
+                            <b> MV: </b> {{data.ChainMarketValue}}
+                        </div>
+                        <div class="word-break: break-all;">
+                            <b> CV: </b> {{data.ChainConsidrationValue}}
+                        </div>
+                    </div>
+                </div>
+                <div class="content">{{data.ClaimantName}}</div>
+                <i class="edge verticalEdge bottomEdge fa"></i>
+            </div>
+        </td>
+    </tr>
+    <tr class="lines" *ngIf="data.Children.length > 0">
+        <td [colSpan]="(data.Children.length == 0 ? 1 : data.Children.length) * 2">
+            <div class=" {{showChildTreeBroken ? 'down' : 'downLine'}}"></div>
+        </td>
+    </tr>
+    <tr class="lines" *ngIf="showChildTreeBroken">
+        <td class="rightBroken">&nbsp;</td>
+        <td class="leftBroken">&nbsp;</td>
+    </tr>
+    <tr class="lines" *ngIf="data.Children.length > 0 && !showChildTreeBroken">
+        <td class="rightLine">&nbsp;</td>
+        <td class="{{pIndex % 2 == 0 ? 'leftLine' : 'rightLine'}} topLine"
+            *ngFor="let item of counter(data.Children ? data.Children.length : 0);let pIndex=index">
+            &nbsp;
+        </td>
+        <td class="leftLine">&nbsp;</td>
+    </tr>
+    <tr class="nodes" *ngIf="data.Children.length > 0">
+        <td colspan="2" *ngFor="let child of data.Children;let c1Index=index">
+            <app-children-element class="chilnode" [data]="child" [chainColumnWrapEnabled]="chainColumnWrapEnabled">
+            </app-children-element>
+        </td>
+    </tr>
+</table>
+<!-- <ul *ngIf="data.Children.length > 0 && showTreeBroken" class="tree-broken">
+    <li *ngFor="let child of data.Children;let c1Index=index">
+        <div class="gable-bg content tree-broken-arrow"> {{child.ExecutantName}} </div>
+        <ul>
+            <div class="gable-bg content"> {{child.ClaimantName}}
+                <div class="margin-top-10">By {{child.TransactionNature}}
+                    <span>{{child.DateOfRegistration}}</span>
+                </div>
+            </div>
+            <app-children-element class="chilnode" [data]="child"></app-children-element>
+        </ul>
+    </li>
+</ul> -->
+<!-- Un broken chain dom elements -->
+<!-- <ul *ngIf="data.Children.length > 0 && !showTreeBroken">
+    <li *ngFor="let child of data.Children;let c1Index=index">
+        <div class="gable-bg content"> {{child.ClaimantName}}
+            <div class="margin-top-10">By {{child.TransactionNature}}
+                <span>{{child.DateOfRegistration}}</span>
+            </div>
+        </div>
+        <app-children-element class="chilnode" [data]="child"></app-children-element>
+    </li>
+</ul> -->

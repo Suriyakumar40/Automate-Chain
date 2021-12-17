@@ -1,0 +1,273 @@
+<!-- <div id="chart-container" class="tree" style="overflow-x:auto;padding-top: 0px;">
+  <div class="orgchart">
+    <table>
+      <tr>
+        <td>
+          <div class="node node-col-wrap">
+            <span class="office"></span>
+            <div class="title">
+              &nbsp;
+            </div>
+            <div class="content">Before 1987 - Online Data not available
+            </div>
+            <i class="edge verticalEdge bottomEdge fa"></i>
+          </div>
+        </td>
+      </tr>
+      <tr class="lines">
+        <td>
+          <div class="downLine"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table>
+            <tr>
+              <td>
+                <table>
+                  <tr class="lines">
+                    <td class="rightLine">&nbsp;</td>
+                    <td class="topLine"> &nbsp; </td>
+                    <td class="leftLine">&nbsp;</td>
+                  </tr>
+                  <tr class="nodes" style="page-break-inside: avoid;">
+                    <td colspan="2">
+                      <table>
+                        <tr>
+                          <td colspan="2">
+                            <div class="node node-col-wrap">
+                              <span class="office"></span>
+                              <div class="title">
+                                &nbsp;
+                              </div>
+                              <div class="content"> Kumar </div>
+                              <i class="edge verticalEdge bottomEdge fa"></i>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr class="lines">
+                          <td>
+                            <div class="downLine"></div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                            <div class="node node-col-wrap">
+                              <span class="office">
+                                20-Sep-2002 (123)</span>
+                              <div class="title"> By Ram
+                                &nbsp;
+                              </div>
+                              <div>
+                                <div class="content"
+                                  style="border-bottom:0;border-bottom-left-radius: 0;border-bottom-right-radius: 0">
+                                  <div class="word-break: break-all;">
+                                    <b> Size: </b>
+                                    234 Sq.ft
+                                  </div>
+                                  <div class="word-break: break-all;">
+                                    <b> Survey Number : </b>
+                                    10/1A, 10/1B, 10/1C
+                                  </div>
+                                  <div class="word-break: break-all;">
+                                    <b> MV: </b> 10,000
+                                  </div>
+                                  <div class="word-break: break-all;">
+                                    <b> CV: </b>
+                                    20,000
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="content">iuiewurtiuw</div>
+                              <i class="edge verticalEdge bottomEdge fa"></i>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr style="page-break-inside: avoid;" class="node node-col-wrap">
+                          <td colspan="2">
+
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div> -->
+
+
+
+<!-- <tr class="lines">
+  <td class="rightLine">&nbsp;</td>
+  <td class="leftLine">&nbsp;</td>
+</tr>
+<tr>
+  <td style="border-top: 2px solid #389b3c;"> </td>
+  <td style="border-top: 2px solid #389b3c;">
+  </td>
+</tr> -->
+
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+  <div id="chart-container" class="tree" style="overflow-x:auto;padding-top: 0px;">
+    <div class="orgchart">
+      <table>
+        <tr *ngIf="showChainDefaultHeader">
+          <td>
+            <div class="{{chainColumnWrapEnabled ? 'node node-col-wrap' : 'node'}}">
+              <span class="office"></span>
+              <div class="title"> &nbsp;
+              </div>
+              <div class="content">Before {{ecStartDate}} - Online Data not
+                available
+              </div>
+              <i class="edge verticalEdge bottomEdge fa"></i>
+            </div>
+          </td>
+        </tr>
+        <tr class="lines" *ngIf="ownershipChainRequest && ownershipChainRequest.length > 0 && showChainDefaultHeader">
+          <td>
+            <div class="downLine"></div>
+          </td>
+        </tr>
+        <tr>
+          <td *ngFor="let columnItem of ownershipChainRequest;let colIndex=index">
+            <table>
+              <tr>
+                <td>
+                  <table>
+                    <tr class="lines" *ngIf="columnItem && columnItem.length > 1 && showChainDefaultHeader">
+                      <td class="rightLine">&nbsp;</td>
+                      <td class="{{pIndex % 2 == 0 ? 'leftLine' : 'rightLine'}} topLine"
+                        *ngFor="let item of counter(columnItem ? columnItem.length : 0);let pIndex=index">
+                        &nbsp;</td>
+                      <td class="leftLine">&nbsp;</td>
+                    </tr>
+                    <tr class="nodes" style="page-break-inside: avoid;" *ngIf="columnItem && columnItem.length > 0">
+                      <td colspan="2"
+                        *ngFor="let parent of columnItem;let pIndex=index;first as isFirst; last as isLast">
+                        <table
+                          [ngStyle]="{'border-right': chainColumnWrapEnabled && ownershipChainRequest && ownershipChainRequest.length > 0 && colIndex < ownershipChainRequest.length - 1 ? '2px solid #389b3c' : ''}">
+                          <tr
+                            *ngIf="chainColumnWrapEnabled && ownershipChainRequest && ownershipChainRequest.length > 1 && colIndex !== 0">
+                            <td style="border-top: 2px solid #389b3c;border-right: 2px solid #389b3c;">
+                            </td>
+                            <td></td>
+                          </tr>
+                          <tr *ngIf="colIndex === 0 || (columnItem && columnItem.length > 1)">
+                            <td colspan="2">
+                              <div class="{{chainColumnWrapEnabled ? 'node node-col-wrap' : 'node'}}">
+                                <span class="office"></span>
+                                <div class="title">
+                                  <!-- <i class="fa fa-users symbol"></i> -->&nbsp;
+                                </div>
+                                <div class="content">{{parent.ExecutantName}}</div>
+                                <i class="edge verticalEdge bottomEdge fa"></i>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr class="lines">
+                            <td class="rightLine">&nbsp;</td>
+                            <td class="leftLine">&nbsp;</td>
+                          </tr>
+                          <tr *ngIf="!parent.Children">
+                            <td colspan="2">
+                              <div class="{{chainColumnWrapEnabled ? 'node node-col-wrap' : 'node'}}">
+                                <span class="office">
+                                  {{parent.DateOfRegistration}}
+                                  ({{parent.DocumentNumber}})</span>
+                                <div class="title"> By {{parent.TransactionNature}}
+                                  <!-- <i class="fa fa-users symbol"></i> -->&nbsp;
+                                </div>
+                                <div>
+                                  <div class="content"
+                                    style="border-bottom:0;border-bottom-left-radius: 0;border-bottom-right-radius: 0">
+                                    <div class="word-break: break-all;">
+                                      <b> Size: </b>
+                                      {{parent.ChainPropertySize}}
+                                    </div>
+                                    <div class="word-break: break-all;">
+                                      <b> {{propertyNumberType}} : </b>
+                                      {{parent.SurveyNumbers}}
+                                    </div>
+                                    <div class="word-break: break-all;">
+                                      <b> MV: </b> {{parent.ChainMarketValue}}
+                                    </div>
+                                    <div class="word-break: break-all;">
+                                      <b> CV: </b>
+                                      {{parent.ChainConsidrationValue}}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="content">{{parent.ClaimantName}}</div>
+                                <i class="edge verticalEdge bottomEdge fa"></i>
+                              </div>
+                            </td>
+                          </tr>
+                          <!-- Splited two or more nodes merged into single node -->
+                          <tr class="lines">
+                            <td class="rightLine">&nbsp;</td>
+                            <td class="leftLine">&nbsp;</td>
+                          </tr>
+                          <!-- Splited two or more nodes merged into single node -->
+                          <tr class="lines">
+                            <td [ngClass]='{"merge-transaction": !isFirst}'></td>
+                            <td [ngClass]='{"merge-transaction": !isLast}'></td>
+                          </tr>
+                          <tr style="page-break-inside: avoid;" class="nodes" *ngIf="parent.Children">
+                            <td colspan="2">
+                              <app-children-element class="parnode" [data]="parent"
+                                [chainColumnWrapEnabled]="chainColumnWrapEnabled">
+                              </app-children-element>
+                            </td>
+                          </tr>
+                          <tr
+                            *ngIf="chainColumnWrapEnabled && ownershipChainRequest && ownershipChainRequest.length > 0 && colIndex < ownershipChainRequest.length - 1"
+                            class="lines">
+                            <td class="rightLine">&nbsp;</td>
+                            <td class="leftLine">&nbsp;</td>
+                          </tr>
+                          <tr
+                            *ngIf="chainColumnWrapEnabled && ownershipChainRequest && ownershipChainRequest.length > 0 && colIndex < ownershipChainRequest.length - 1">
+                            <td></td>
+                            <td style="border-top: 2px solid #389b3c;">
+
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Splited two or more nodes merged into single node -->
+        <tr class="lines">
+          <td>
+            <div class="downLine"></div>
+          </td>
+        </tr>
+        <tr *ngIf="showChainDefaultHeader" style="margin-top:10px;">
+          <td>
+            <div class="{{chainColumnWrapEnabled ? 'node node-col-wrap' : 'node'}}">
+              <span class="office"></span>
+              <div class="title"> &nbsp;
+              </div>
+              <div class="content"> Custom Name
+              </div>
+              <i class="edge verticalEdge bottomEdge fa"></i>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
