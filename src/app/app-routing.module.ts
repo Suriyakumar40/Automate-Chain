@@ -11,6 +11,10 @@ const routes: Routes = [
     path: 'chain-with-csv-table',
     loadChildren: () => import('./components/chain-with-csv-table/chain-with-csv-table.module').then(m => m.ChainWithCSVTableModule)
   },
+  {
+    path: 'chain-with-csv-lists',
+    loadChildren: () => import('./components/chain-with-csv-lists/chain-with-csv-lists.module').then(m => m.ChainWithCSVListsModule)
+  },
 ]
 
 @NgModule({

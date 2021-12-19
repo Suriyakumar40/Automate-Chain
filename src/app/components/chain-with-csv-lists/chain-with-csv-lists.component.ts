@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ChainService } from 'src/app/services/chain.service';
 
 @Component({
-  selector: 'app-chain-with-csv-table',
-  templateUrl: './chain-with-csv-table.component.html',
-  styleUrls: ['./chain-with-csv-table.component.scss']
+  selector: 'app-chain-with-csv-lists',
+  templateUrl: './chain-with-csv-lists.component.html',
+  styleUrls: ['./chain-with-csv-lists.component.scss']
 })
-export class ChainWithCSVTableComponent implements OnInit {
+export class ChainWithCSVListsComponent implements OnInit {
 
   public propertyNumberType = 'SurveyNumber';
   public ecStartDate = '1987'
