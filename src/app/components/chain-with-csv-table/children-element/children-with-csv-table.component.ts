@@ -2,12 +2,12 @@ import { Component, ViewEncapsulation, OnInit, Input, ChangeDetectorRef } from '
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
-    selector: 'app-children-with-csv-element',
-    templateUrl: './child-element-with-csv.component.html',
+    selector: 'app-children-with-csv-table',
+    templateUrl: './children-with-csv-table.component.html',
     encapsulation: ViewEncapsulation.None
 })
 
-export class ChildrenElementWithCSVComponent implements OnInit {
+export class ChildrenWithCSVTableComponent implements OnInit {
     @Input() data: any;
     config: any;
     public showTreeBroken = false;

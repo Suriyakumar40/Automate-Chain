@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { ChainWithCSVComponent } from './chain-with-csv.component';
+import { ChainWithCSVComponent } from './chain-with-csv-table.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ChildrenElementWithCSVComponent } from './children-element/child-element-with-csv.component';
+import { ChildrenWithCSVTableComponent } from './children-element/children-with-csv-table.component';
 import { SplitNodesComponent } from './split-nodes/split-nodes.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
@@ -15,7 +15,7 @@ export const routes = [
 @NgModule({
   declarations: [
     ChainWithCSVComponent,
-    ChildrenElementWithCSVComponent,
+    ChildrenWithCSVTableComponent,
     SplitNodesComponent
   ],
   imports: [
@@ -27,4 +27,4 @@ export const routes = [
   ],
   providers: []
 })
-export class ChainWithCSVModule { }
+export class ChainWithCSVTableModule { }

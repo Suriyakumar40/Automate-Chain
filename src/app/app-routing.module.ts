@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'chain-with-csv-table',
-    loadChildren: () => import('./components/chain-with-csv-table/chain-with-csv.module').then(m => m.ChainWithCSVModule)
+    loadChildren: () => import('./components/chain-with-csv-table/chain-with-csv-table.module').then(m => m.ChainWithCSVTableModule)
   },
 ]
 

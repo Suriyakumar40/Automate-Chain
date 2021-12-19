@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ChainService } from 'src/app/services/chain.service';
 
 @Component({
-  selector: 'app-chain-with-csv',
-  templateUrl: './chain-with-csv.component.html',
-  styleUrls: ['./chain-with-csv.component.scss']
+  selector: 'app-chain-with-csv-table',
+  templateUrl: './chain-with-csv-table.component.html',
+  styleUrls: ['./chain-with-csv-table.component.scss']
 })
 export class ChainWithCSVComponent implements OnInit {
 
