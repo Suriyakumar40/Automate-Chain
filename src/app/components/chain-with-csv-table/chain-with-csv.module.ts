@@ -5,6 +5,8 @@ import { ChainWithCSVComponent } from './chain-with-csv.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ChildrenElementWithCSVComponent } from './children-element/child-element-with-csv.component';
+import { SplitNodesComponent } from './split-nodes/split-nodes.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 export const routes = [
   { path: '', component: ChainWithCSVComponent, pathMatch: 'full' },
@@ -13,12 +15,14 @@ export const routes = [
 @NgModule({
   declarations: [
     ChainWithCSVComponent,
-    ChildrenElementWithCSVComponent
+    ChildrenElementWithCSVComponent,
+    SplitNodesComponent
   ],
   imports: [
     FormsModule,
     CommonModule,
     HttpClientModule,
+    SharedModule,
     RouterModule.forChild(routes),
   ],
   providers: []

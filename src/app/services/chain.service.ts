@@ -8,7 +8,8 @@ export class ChainService {
 
   constructor(private http: HttpClient) { }
 
-  getCSVData() {
-    return this.http.get('assets/chain-data.csv', { responseType: 'text' })
+  getCSVData(sheetName: string) {
+    const url = `assets/${sheetName}`;
+    return this.http.get(url, { responseType: 'text' })
   }
 }

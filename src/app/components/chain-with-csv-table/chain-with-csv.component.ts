@@ -21,7 +21,8 @@ export class ChainWithCSVComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chainService.getCSVData().subscribe(data => {
+    const sheetName = 'chain-data-table.csv';
+    this.chainService.getCSVData(sheetName).subscribe(data => {
       const items = data ? data.replace(this.header, '').split('\r\n').filter(it => it) : [];
       if (items && items.length > 0) {
         this.extractCSVModel = items.map(it => {

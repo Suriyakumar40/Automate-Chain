@@ -1,0 +1,86 @@
+<table cellpadding="0" cellspacing="0">
+
+    <!-- START: Split one node into multiple -->
+    <app-split-nodes class="lines" [children]="data.children" *ngIf="data.children.length > 1"> </app-split-nodes>
+    <!-- END -->
+
+    <tr class="nodes child" *ngIf="items.length === 0">
+        <td colspan="2" *ngFor="let child of data.children;let c1Index=index; first as isFirst; last as isLast">
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <app-chain-details [data]="child"></app-chain-details>
+                    </td>
+                </tr>
+                <tr class="lines" *ngIf="child.children.length > 0">
+                    <td colspan="2">
+                        <div class="downLine"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <app-children-with-csv-element class="chilnode" [data]="child">
+                        </app-children-with-csv-element>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- START: If two or more parent has same child then below table row will execute -->
+    <!-- Two or more parents connect with the child -->
+    <tr class="nodes sameChild" *ngIf="items.length > 0">
+        <td colspan="2"
+            *ngFor="let siblingParent of items;let c1Index=index; first as isFirst; last as isLast">
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <app-chain-details [data]="siblingParent"></app-chain-details>
+                    </td>
+                </tr>
+                <tr class="lines" *ngIf="siblingParent.children.length > 0">
+                    <td colspan="2">
+                        <div class="downLine"></div>
+                    </td>
+                </tr>
+                <tr class="lines" *ngIf="siblingParent.sameSiblings.length > 0">
+                    <td [ngClass]='{"topLine": !isFirst}'></td>
+                    <td [ngClass]='{"topLine": !isLast}'></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="lines si-down" *ngIf="parentsOfSameChildren.length > 0">
+        <td [colSpan]="(parentsOfSameChildren.length) * 2">
+            <div class="downLine"></div>
+        </td>
+    </tr>
+
+    <!-- START: Split one node into multiple -->
+    <app-split-nodes class="lines" [children]="sameChildren" *ngIf="sameChildren.length > 1"> </app-split-nodes>
+    <!-- END -->
+
+    <tr class="nodes " *ngIf="parentsOfSameChildren.length > 0">
+        <td [colSpan]="parentsOfSameChildren.length * 2"
+            *ngFor="let siblingChild of sameChildren;let sibIndex=index; first as isFirst; last as isLast">
+            <table>
+                <tr>
+                    <td>
+                        <app-chain-details [data]="siblingChild"></app-chain-details>
+                    </td>
+                </tr>
+                <tr class="lines" *ngIf="siblingChild.children.length > 0">
+                    <td>
+                        <div class="downLine"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12">
+                        <app-children-with-csv-element class="chilnode" [data]="siblingChild">
+                        </app-children-with-csv-element>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- END: Table row -->
+</table>

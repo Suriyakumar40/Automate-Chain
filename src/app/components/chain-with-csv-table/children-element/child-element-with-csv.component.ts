@@ -13,20 +13,21 @@ export class ChildrenElementWithCSVComponent implements OnInit {
     public showTreeBroken = false;
     public showChildTreeBroken = false;
     public propertyNumberType = 'Survey Number';
-    public isSameSibling: boolean = false;
-    public siblingParents: Array<any> = [];
-    public siblingChilds: Array<any> = [];
+    public sameChildren: Array<any> = [];
+    public parentsOfSameChildren: Array<any> = [];
+    public items: Array<any> = [];
 
     constructor(private activatedRoute: ActivatedRoute, router: Router) {
     }
 
     ngOnInit(): void {
         if (this.data && this.data.children && this.data.children.length > 0) {
-            this.siblingParents = this.data.children.filter((it: any) => it.sameSiblings && it.sameSiblings.length > 0);
-            if (this.siblingParents && this.siblingParents.length > 0) {
-                this.isSameSibling = true;
-                const lastSiblingParent = this.siblingParents[this.siblingParents.length - 1];
-                this.siblingChilds = lastSiblingParent.children.filter((it: any) =>
+            this.parentsOfSameChildren = this.data.children.filter((it: any) => it.sameSiblings && it.sameSiblings.length > 0);
+            const children = this.data.children.filter((it: any) => !it.sameSiblings || it.sameSiblings.length === 0);
+            this.items = [ ...children, ...this.parentsOfSameChildren];
+            if (this.parentsOfSameChildren && this.parentsOfSameChildren.length > 0) {
+                const lastSiblingParent = this.parentsOfSameChildren[this.parentsOfSameChildren.length - 1];
+                this.sameChildren = lastSiblingParent.children.filter((it: any) =>
                     lastSiblingParent.sameSiblings.some((last: any) => last === it.child));
             }
         }
