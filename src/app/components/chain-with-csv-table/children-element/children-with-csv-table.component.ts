@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 @Component({
     selector: 'app-children-with-csv-table',
     templateUrl: './children-with-csv-table.component.html',
+    styleUrls: ['./children-with-csv-table.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -24,7 +25,7 @@ export class ChildrenWithCSVTableComponent implements OnInit {
         if (this.data && this.data.children && this.data.children.length > 0) {
             this.parentsOfSameChildren = this.data.children.filter((it: any) => it.sameSiblings && it.sameSiblings.length > 0);
             const children = this.data.children.filter((it: any) => !it.sameSiblings || it.sameSiblings.length === 0);
-            this.items = [ ...children, ...this.parentsOfSameChildren];
+            this.items = [...children, ...this.parentsOfSameChildren];
             if (this.parentsOfSameChildren && this.parentsOfSameChildren.length > 0) {
                 const lastSiblingParent = this.parentsOfSameChildren[this.parentsOfSameChildren.length - 1];
                 this.sameChildren = lastSiblingParent.children.filter((it: any) =>

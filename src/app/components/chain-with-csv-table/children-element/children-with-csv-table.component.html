@@ -4,7 +4,7 @@
     <app-split-nodes class="lines" [children]="data.children" *ngIf="data.children.length > 1"> </app-split-nodes>
     <!-- END -->
 
-    <tr class="nodes child" *ngIf="items.length === 0">
+    <tr class="nodes child" *ngIf="parentsOfSameChildren.length === 0">
         <td colspan="2" *ngFor="let child of data.children;let c1Index=index; first as isFirst; last as isLast">
             <table>
                 <tr>
@@ -28,7 +28,7 @@
     </tr>
     <!-- START: If two or more parent has same child then below table row will execute -->
     <!-- Two or more parents connect with the child -->
-    <tr class="nodes sameChild" *ngIf="items.length > 0">
+    <tr class="nodes sameChild" *ngIf="parentsOfSameChildren.length > 0">
         <td colspan="2"
             *ngFor="let siblingParent of items;let c1Index=index; first as isFirst; last as isLast">
             <table>

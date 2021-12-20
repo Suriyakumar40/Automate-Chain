@@ -1,0 +1,40 @@
+@import url('./../../styles/_org-chart-lists.scss');
+
+#chart-container {
+    font-family: Arial;
+    height: 420px;
+    overflow: auto;
+    text-align: center;
+  }
+
+
+.orgchart {
+    background-image: none;
+}
+
+// .orgchart .node {
+//     display: inline-block;
+//     position: relative;
+//     margin: 0;
+//     padding: 3px;
+//     border: 2px dashed transparent;
+//     text-align: center;
+//     width: 130px !important;
+// }
+
+// .orgchart .node .content {
+//     border: 1px solid #389b3c;
+//     text-overflow: inherit;
+//     height: auto;
+//     white-space: normal;
+//     word-break: break-word;
+// }
+
+// .orgchart .node .title {
+//     background: #389b3c;
+//     font-size: 10px;
+//     text-overflow: inherit;
+//     height: auto;
+//     white-space: normal;
+//     width: 120px;
+// }
