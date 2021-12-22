@@ -199,6 +199,27 @@ app-split-nodes {
 	display: table-row;
 }
 
+.align-right-33 {
+	position: relative;
+	right: 33%;
+}
+
+.align-right-50 {
+	position: relative;
+	right: 50%;
+}
+
+.connector {
+	border: 1px solid #4c9c3c;
+    position: relative;
+	left: 50%;
+}
+
+.connector.reduce-width {
+	left: 0%;
+	width: 50%;
+}
+
 @media print {
 	
 	.tree ul {

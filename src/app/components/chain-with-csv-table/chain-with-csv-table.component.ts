@@ -32,7 +32,10 @@ export class ChainWithCSVTableComponent implements OnInit {
             child: child,
             parent: parent,
             displayName: displayName,
-            sameSiblings: [],
+            sameChildren: [],
+            childrenCount: 0,
+            bottomLineAutoHeight: '',
+            needToPositioning: false
           };
         }).filter(it => parseInt(it.set) === this.set);
         this.chainModel = this.constructParentAndChild(this.extractCSVModel);
@@ -53,10 +56,20 @@ export class ChainWithCSVTableComponent implements OnInit {
       previous[parent] = previous[parent] ? previous[parent] : {};
       previous[parent].children = previous[parent].children ? previous[parent].children : [];
       previous[parent].children.push(current);
+      if (parent !== 'None') {
+        previous[parent].childrenCount = previous[parent].childrenCount + 1;
+      }
       if (previous[child] && Object.keys(previous[child]).length > 0) {
-        const previousParent = previous[child].parent;
-        previous[previousParent].sameSiblings.push(child);
-        previous[parent].sameSiblings.push(child);
+        const pParent = previous[child].parent;
+        const previousParent = previous[pParent]
+        const findIndex = previousParent.children.findIndex((pre: any) => pre.child === child);
+        if (findIndex > -1) {
+          previousParent.children.splice(findIndex, 1);
+        }
+        previousParent.sameChildren.push(child);
+        previousParent.class = '';
+        current.needToPositioning = true;
+        previous[parent].sameChildren.push(child);
       }
       previous[child] = current;
       return previous;
