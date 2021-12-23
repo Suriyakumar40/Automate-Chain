@@ -30,7 +30,7 @@
                             <!-- END -->
                             <tr>
                                 <td id="root_{{parent.child}}" colspan="2" *ngFor="let parent of chainModel;let colIndex=index">
-                                    <table>
+                                    <table id="parent_{{parent.child}}">
                                         <tr>
                                             <td colspan="2">
                                                 <app-chain-details [data]="parent"></app-chain-details>

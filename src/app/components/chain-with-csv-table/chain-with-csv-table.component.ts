@@ -35,10 +35,12 @@ export class ChainWithCSVTableComponent implements OnInit {
             sameChildren: [],
             childrenCount: 0,
             bottomLineAutoHeight: '',
+            connectorChildren: [],
             needToPositioning: false
           };
         }).filter(it => parseInt(it.set) === this.set);
         this.chainModel = this.constructParentAndChild(this.extractCSVModel);
+        console.log(this.chainModel);
       }
     });
   }
@@ -63,13 +65,24 @@ export class ChainWithCSVTableComponent implements OnInit {
         const pParent = previous[child].parent;
         const previousParent = previous[pParent]
         const findIndex = previousParent.children.findIndex((pre: any) => pre.child === child);
-        if (findIndex > -1) {
-          previousParent.children.splice(findIndex, 1);
-        }
-        previousParent.sameChildren.push(child);
         previousParent.class = '';
         current.needToPositioning = true;
-        previous[parent].sameChildren.push(child);
+        if (findIndex > -1) {
+          previousParent.children.splice(findIndex, 1);
+
+        }
+        if (!previousParent.sameChildren.some((it: any) => it === child)) {
+          previousParent.sameChildren.push(child);
+        }
+        if (!previous[parent].sameChildren.some((it: any) => it === child)) {
+          previous[parent].sameChildren.push(child);
+        }
+        if (!previousParent.connectorChildren.some((it: any) => it === parent)) {
+          previousParent.connectorChildren.push(parent);
+        }
+        if (!previous[parent].connectorChildren.some((it: any) => it === pParent)) {
+          previous[parent].connectorChildren.push(pParent);
+        }
       }
       previous[child] = current;
       return previous;

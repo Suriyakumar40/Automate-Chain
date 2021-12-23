@@ -64,6 +64,23 @@ export class ChildrenWithCSVTableComponent implements OnInit {
         return '';
     }
 
+    adjustHeight(childItem: any) {
+        const defaultHeight = 20;
+        if (childItem.connectorChildren.length === 0) {
+            return `${defaultHeight}px`;
+        }
+        const result = childItem.connectorChildren.map((connectorChild: any) => {
+            const currentChildDomElement = document.getElementById(`child_data_${childItem.child}`);
+            const childDomElement = document.getElementById(`child_data_${connectorChild}`);
+            const currentChildDomElementHeight: number = currentChildDomElement && currentChildDomElement.offsetHeight || 0;
+            const childDomElementHeight: number = childDomElement && childDomElement.offsetHeight || 0;
+            const height = childDomElementHeight - currentChildDomElementHeight;
+            return height > 0 ? height : 0;
+        });
+        const height = Math.max(result);
+        return `${defaultHeight+height}px`;
+    }
+
     autoHeight(child: any) {
         const defaultHeight = '20px';
         if (child.sameChildren.length === 0) {
