@@ -22,13 +22,6 @@ export class ChildrenWithCSVTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // for (const child of this.data.children) {
-        //     if (child.sameChildren.length) {
-        //         const rootDomElement = document.getElementById(`root_${child.parent}`);
-        //         const height = rootDomElement && rootDomElement.offsetHeight || 0;
-        //         child['bottomLineAutoHeight'] = `${height}px`;
-        //     }
-        // }
         // if (this.data && this.data.sameChildren.length > 0 && this.data.children.length > 0) {
         //     for (const item of this.data.children) {
         //         const index = this.data.sameChildren.findIndex((s: any) => s === item.child);
@@ -57,9 +50,6 @@ export class ChildrenWithCSVTableComponent implements OnInit {
             return 'align-right-33';
         } else if (child.needToPositioning && child.childrenCount <= 1) {
             return 'align-right-50';
-        }
-        if (child.sameChildren.length > 0) {
-            child['bottomLineAutoHeight'] = this.autoHeight(child);
         }
         return '';
     }
