@@ -39,7 +39,6 @@ export class ChainWithCSVTableComponent implements OnInit {
             displayEnum: 'show',
             sameChildren: [],
             childrenCount: 0,
-            connectorChildren: [],
             virtualChild: false,
             needToPositioning: false,
             parentLists: []
@@ -95,25 +94,7 @@ export class ChainWithCSVTableComponent implements OnInit {
         }
         if (result[child] && Object.keys(result[child]).length > 0) {
           result = this.constructVirtualChild(result, current);
-          const pParent = result[child].parent;
-          const previousParent = result[pParent];
           current.needToPositioning = true;
-          // const findIndex = previousParent.children.findIndex((pre: any) => pre.child === child);
-          // if (findIndex > -1) {
-          //   previousParent.children[findIndex].virtualChild = true;
-          // }
-          if (!previousParent.sameChildren.some((it: any) => it === child)) {
-            previousParent.sameChildren.push(child);
-          }
-          if (!currentParent.sameChildren.some((it: any) => it === child)) {
-            currentParent.sameChildren.push(child);
-          }
-          if (!previousParent.connectorChildren.some((it: any) => it === parent)) {
-            previousParent.connectorChildren.push(parent);
-          }
-          if (!currentParent.connectorChildren.some((it: any) => it === pParent)) {
-            currentParent.connectorChildren.push(pParent);
-          }
           result[child] = current;
         } else {
           result[child] = current;
@@ -138,21 +119,6 @@ export class ChainWithCSVTableComponent implements OnInit {
     }
   }
 
-
-  calculateColumnDistance(existing: any, current: any) {
-    try {
-      const child = current.child;
-      const previousParent = existing[child];
-      const previousParentIndex = previousParent ? previousParent.columnIndex : 0
-      const difference = current.columnIndex - previousParentIndex;
-      if (difference > 1 || difference <= 0) {
-        debugger
-      }
-    } catch (ex) {
-      throw ex;
-    }
-  }
-
   calculateRowDistance(existing: any, current: any) {
     try {
       const parent = current.parent;
@@ -171,18 +137,12 @@ export class ChainWithCSVTableComponent implements OnInit {
       const parent = current.parent;
       const child = current.child;
       if (rowDifference > 0) {
-        const children = this.extractDataModel.filter(it => it.child === child);
-        for (const item of children) {
-          const pParent = item.parent;
-          if (current.parent === pParent) {
-            return existing;
-          }
-          existing[pParent].children = this.createVirtualChildModel(child, existing[pParent]);
+        existing = this.createVirtualChildForPreviousChildren(existing, current);
+      } else if (rowDifference <= -1 && existing[parent]) {
+        for (let i = 0; i < -(rowDifference); i++) {
+          const { childrenLists } = this.virtualChildModel(child, existing[parent].children);
+          existing[parent].children = childrenLists;
         }
-      } else if (rowDifference <= -1) {
-        const previousParent = existing[parent] ? existing[parent] : null;
-        existing[parent].children = this.createVirtualChildModel(child, previousParent);
-        this.constructVirtualChild(existing, current);
       }
       return existing;
     } catch (ex) {
@@ -190,40 +150,79 @@ export class ChainWithCSVTableComponent implements OnInit {
     }
   }
 
-  createVirtualChildModel(currentChild: any, item: any) {
+  createVirtualChildForPreviousChildren(existing: any, current: any) {
     try {
-      const uniqueId = Math.random().toString(16).slice(10);
-      const existingChildren = this.updateRowIndex(uniqueId, item.children);
-      return [{
-        rowIndex: item.rowIndex + 1,
-        set: 1,
-        child: currentChild,
-        parent: item.child,
-        children: existingChildren,
-        displayName: `${item.displayName}_${uniqueId}`,
-        sameChildren: [],
-        childrenCount: 0,
-        connectorChildren: [],
-        virtualChild: true,
-        needToPositioning: false,
-        displayEnum: 'bottomLine'
-      }];
+      const parent = current.parent;
+      const child = current.child;
+      for (const pParent of current.parentLists) {
+        if (parent === pParent) {
+          return existing;
+        }
+        const findIndex = existing[pParent].children.findIndex((it: any) => it.child === child);
+        if (findIndex >= -1) {
+          const currentParentIndex = this.getCurrentParentRowIndex(child, existing[parent]);
+          const previousParentIndex = this.getPreviousParentRowIndex(existing[pParent]);
+          const rowDifference = currentParentIndex - previousParentIndex;
+          if (rowDifference > 0) {
+            for (let i = 0; i < rowDifference; i++) {
+              const { childrenLists } = this.virtualChildModel(child, existing[pParent].children);
+              existing[pParent].children = childrenLists;
+            }
+          }
+        }
+      }
+      return existing;
     } catch (ex) {
       throw ex;
     }
   }
 
-  updateRowIndex(uniqueId: string, children: Array<any>): Array<any> {
+  virtualChildModel(currentChild: any, children: Array<any>) {
     try {
-      if (!children || children.length === 0) {
-        return children;
+      const findIndex = children.findIndex((it: any) => it.child === currentChild);
+      if (findIndex > -1) {
+        const findChild = children[findIndex];
+        const uniqueId = Math.random().toString(16).slice(8);
+        const existingChildren = this.updateRowIndex(findChild);
+        const newVirtualChild = {
+          rowIndex: existingChildren.rowIndex - 1,
+          set: 1,
+          child: currentChild,
+          parent: findChild.parent,
+          children: [existingChildren],
+          displayName: `${uniqueId}`,
+          sameChildren: [],
+          childrenCount: 0,
+          virtualChild: true,
+          needToPositioning: false,
+          displayEnum: 'bottomLine'
+        };
+        children[findIndex] = Object.assign({}, newVirtualChild);
       }
-      for (const item of children) {
-        // item.parent = uniqueId;
-        item.rowIndex = item.rowIndex > 0 ? item.rowIndex + 1 : 1;
-        this.updateRowIndex(uniqueId, item.children);
+      return {
+        findIndex: findIndex,
+        childrenLists: children
+      };
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  updateRowIndex(child: any): any {
+    try {
+      const renderChild = Object.assign({}, child);
+      renderChild.rowIndex = this.incrementRowIndex(renderChild.rowIndex);
+      if (!renderChild.children || renderChild.children.length === 0) {
+        return renderChild;
       }
-      return children;
+      const children = renderChild.children.map((it: any) => {
+        return Object.assign({}, it);
+      });
+      for (const child of children) {
+        child.rowIndex = this.incrementRowIndex(renderChild.rowIndex);
+        this.updateRowIndex(child.children);
+      }
+      return renderChild;
     } catch (ex) {
       throw ex;
     }
@@ -266,6 +265,10 @@ export class ChainWithCSVTableComponent implements OnInit {
   getPreviousParent(child: any, existing: any) {
     const pParent = existing[child].parent;
     return existing[pParent];
+  }
+
+  incrementRowIndex(rowIndex: number) {
+    return rowIndex > 0 ? rowIndex + 1 : 1
   }
 }
 

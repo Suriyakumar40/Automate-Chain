@@ -56,7 +56,7 @@ export class ChildrenWithCSVTableComponent implements OnInit {
 
     adjustHeight(childItem: any) {
         const defaultHeight = 20;
-        if (childItem.connectorChildren.length === 0) {
+        if (!childItem.connectorChildren || childItem.connectorChildren.length === 0) {
             return `${defaultHeight}px`;
         }
         const result = childItem.connectorChildren.map((connectorChild: any) => {
@@ -68,7 +68,7 @@ export class ChildrenWithCSVTableComponent implements OnInit {
             return height > 0 ? height : 0;
         });
         const height = Math.max(result);
-        return `${defaultHeight+height}px`;
+        return `${defaultHeight + height}px`;
     }
 
     autoHeight(child: any) {
