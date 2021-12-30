@@ -140,7 +140,7 @@ export class ChainWithCSVTableComponent implements OnInit {
         existing = this.createVirtualChildForPreviousChildren(existing, current);
       } else if (rowDifference <= -1 && existing[parent]) {
         for (let i = 0; i < -(rowDifference); i++) {
-          const { childrenLists } = this.virtualChildModel(child, existing[parent].children);
+          const childrenLists = this.virtualChildModel(child, existing[parent].children);
           existing[parent].children = childrenLists;
         }
       }
@@ -165,7 +165,7 @@ export class ChainWithCSVTableComponent implements OnInit {
           const rowDifference = currentParentIndex - previousParentIndex;
           if (rowDifference > 0) {
             for (let i = 0; i < rowDifference; i++) {
-              const { childrenLists } = this.virtualChildModel(child, existing[pParent].children);
+              const childrenLists = this.virtualChildModel(child, existing[pParent].children);
               existing[pParent].children = childrenLists;
             }
           }
@@ -199,10 +199,8 @@ export class ChainWithCSVTableComponent implements OnInit {
         };
         children[findIndex] = Object.assign({}, newVirtualChild);
       }
-      return {
-        findIndex: findIndex,
-        childrenLists: children
-      };
+      return children
+
     } catch (ex) {
       throw ex;
     }
