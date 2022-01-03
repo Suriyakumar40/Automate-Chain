@@ -17,11 +17,15 @@ export class ChildrenWithCSVTableComponent implements OnInit {
     public sameChildren: Array<any> = [];
     public parentsOfSameChildren: Array<any> = [];
     public items: Array<any> = [];
-
+    public vchildWidth: string = '';
+    public vchildHeight: string = '';
     constructor(private activatedRoute: ActivatedRoute, router: Router) {
     }
 
     ngOnInit(): void {
+        const nodeDataDOM = document.getElementById(`node-data`);
+        this.vchildWidth = nodeDataDOM && `${nodeDataDOM.offsetWidth}px` || '';
+        this.vchildHeight = nodeDataDOM && `${nodeDataDOM.offsetHeight}px` || '';
         // if (this.data && this.data.sameChildren.length > 0 && this.data.children.length > 0) {
         //     for (const item of this.data.children) {
         //         const index = this.data.sameChildren.findIndex((s: any) => s === item.child);

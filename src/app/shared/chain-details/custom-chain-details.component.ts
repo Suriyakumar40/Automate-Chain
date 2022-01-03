@@ -3,11 +3,11 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
     selector: 'app-chain-details',
-    templateUrl: './chain-details.component.html',
+    templateUrl: './custom-chain-details.component.html',
     encapsulation: ViewEncapsulation.None
 })
 
-export class ChainDetailsComponent implements OnInit {
+export class CustomChainDetailsComponent implements OnInit {
     @Input() data: any;
     public propertyNumberType = 'Survey Number';
 

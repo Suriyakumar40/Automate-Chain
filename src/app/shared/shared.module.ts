@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ChainDetailsComponent } from './chain-details/chain-details.component';
+import { CustomChainDetailsComponent } from './chain-details/custom-chain-details.component';
 
 @NgModule({
   declarations: [
-      ChainDetailsComponent,
+      CustomChainDetailsComponent,
   ],
   imports: [
     FormsModule,
@@ -14,7 +14,7 @@ import { ChainDetailsComponent } from './chain-details/chain-details.component';
     HttpClientModule,
   ],
   exports: [
-    ChainDetailsComponent,
+    CustomChainDetailsComponent,
   ],
   providers: []
 })

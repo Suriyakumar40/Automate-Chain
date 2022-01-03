@@ -13,12 +13,17 @@
                         <div class="downLine"></div>
                     </td>
                 </tr> -->
-                <tr>
-                    <td colspan="2" id="child_data_{{childItem.child}}">
+                <tr class="lines" *ngIf="childItem.displayEnum === 'bottomLine'">
+                    <td colspan="2" [style.width]="vchildWidth">
+                        <div class="downLine" [style.height]="vchildHeight"></div>
+                    </td>
+                </tr>
+                <tr *ngIf="childItem.displayEnum === 'show'" id="child_data_{{childItem.child}}">
+                    <td colspan="2">
                         <app-chain-details [data]="childItem"></app-chain-details>
                     </td>
                 </tr>
-                <tr class="lines" *ngIf="childItem.children.length > 0 || childItem.sameChildren.length > 0">
+                <tr class="lines" *ngIf="childItem.children.length > 0 && childItem.displayEnum === 'show'">
                     <!-- [style.height]="autoHeight(childItem)" -->
                     <td colspan="2">
                         <div class="downLine" ></div>
