@@ -17,8 +17,8 @@
                 </tr>
                 <!-- horizontal connector line vertical line -->
                 <tr class="lines" *ngIf="childItem.displayEnum === 'drawHorizontalLine' || childItem.needToPositioning">
-                    <td colspan="2" [style.width]="adjustHorizontalLineWidth(childItem)">
-                        <div class="horizontal-connector" style="width: 100%"> </div>
+                    <td colspan="2" [style.width]="renderWidth(childItem)">
+                        <div class="horizontal-connector" [style]="adjustHorizontalLineByPoint(childItem)"> </div>
                     </td>
                 </tr>
                 <tr class="lines postioning" *ngIf="childItem.needToPositioning">

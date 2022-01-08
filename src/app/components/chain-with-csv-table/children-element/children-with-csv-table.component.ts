@@ -30,12 +30,20 @@ export class ChildrenWithCSVTableComponent implements OnInit {
         this.vchildHeight = nodeDataDOM && `${nodeDataDOM.offsetHeight + 2}px` || '';
     }
 
-    adjustHorizontalLineWidth(childItem: any) {
+    renderWidth(childItem: any) {
         const nodeDataDOM = document.getElementById(`node-data`);
-        if (!childItem.needToPositioning) {
-            return nodeDataDOM && `${nodeDataDOM.offsetWidth}px` || ''
-        }
-        const childDOM = document.getElementById(`child_${childItem.child}`);
-        return childDOM && `${childDOM.offsetWidth}px` || '';
+        return nodeDataDOM && `${nodeDataDOM.offsetWidth}px` || ''
+        // const childDOM = document.getElementById(`child_${childItem.child}`);
+        // return childDOM && `${childDOM.offsetWidth}px` || '';
     }
+
+    adjustHorizontalLineByPoint(childItem: any) {
+        if (childItem.commonChildPoint === 'start') {
+            return { width: '50%', float: 'right' };
+        } else if (childItem.commonChildPoint === 'end') {
+            return { width: '50%', float: 'left' };
+        }
+        return { width: '100%' };
+    }
+    
 }

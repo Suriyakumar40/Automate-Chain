@@ -44,8 +44,8 @@ export class ChainWithCSVTableComponent implements OnInit {
             displayName: displayName,
             displayEnum: 'show',
             virtualChild: false,
-            commonChildPoint: '',
             needToPositioning: false,
+            commonChildPoint: '',
             parentLists: [],
             documentNumber: documentNumber,
             executantName: executantName,
@@ -89,6 +89,16 @@ export class ChainWithCSVTableComponent implements OnInit {
         item.parentLists = result[child];
         result[child].push(parent);
       }
+      if (startandEndPoint) {
+        for (const child of Object.keys(startandEndPoint)) {
+          const startParent = startandEndPoint[child] ? startandEndPoint[child].startParent : null;
+          const endParent = startandEndPoint[child] ? startandEndPoint[child].endParent : null;
+          const findStartItem = items.find(it => it.parent === startParent && it.child === child);
+          findStartItem.commonChildPoint = 'start';
+          const findEndItem = items.find(it => it.parent === endParent && it.child === child);
+          findEndItem.commonChildPoint = 'end';
+        }
+      }
       return items;
     } catch (ex) {
       throw ex;
@@ -99,97 +109,46 @@ export class ChainWithCSVTableComponent implements OnInit {
     try {
       startandEndPoint = startandEndPoint ? startandEndPoint : {};
       const plength = Object.keys(startandEndPoint).length;
+      let previousStartParent, previousEndParent = '';
       if (plength === 0) {
-        const previous = this.findRootParentIndex(pParent, child, items);
-        startandEndPoint = this.findStartandEndPoint(previous, null, pParent);
+        previousStartParent = previousEndParent = this.findRootParentIndex(pParent, child, items);
+        startandEndPoint['startParent'] = startandEndPoint['endParent'] = pParent;
+      } else {
+        previousStartParent = this.findRootParentIndex(startandEndPoint.startParent, child, items);
+        previousEndParent = this.findRootParentIndex(startandEndPoint.endParent, child, items);
       }
       const current = this.findRootParentIndex(parent, child, items);
-      startandEndPoint = this.findStartandEndPoint(startandEndPoint, current, parent);
+      const isStartChild = this.findStartPoint(previousStartParent, current);
+      const isEndChild = this.findEndPoint(previousEndParent, current);
+      startandEndPoint['startParent'] = isStartChild ? parent :  startandEndPoint['startParent'] ;
+      startandEndPoint['endParent'] = isEndChild ? parent :  startandEndPoint['endParent'] ;
       return startandEndPoint;
     } catch (ex) {
       throw ex;
     }
   }
 
-  findStartandEndPoint(previous: any, current: any, child: any) {
-    let result = {
-      startRootParent: '',
-      startRootParentIndex: 0,
-      startChildOfRootParent: '',
-      startChildOfRootParentIndex: 0,
-      startChild: '',
-      endRootParent: '',
-      endRootParentIndex: 0,
-      endChildOfRootParent: '',
-      endChildOfRootParentIndex: 0,
-      endChild: '',
-    };
-    if (!previous && !current) {
-      return result;
-    }
-    if (previous && !current) {
-      result.startRootParent = result.endRootParent = previous.rootParent;
-      result.startRootParentIndex = result.endRootParentIndex = previous.rootParentIndex;
-      result.startChildOfRootParent = result.endChildOfRootParent = previous.childOfRootParent;
-      result.startChildOfRootParentIndex = result.endChildOfRootParentIndex = previous.childOfRootParentIndex;
-      result.startChild = result.endChild = child;
-    } else {
-      const startPoint = this.findStartPoint(previous, current, child);
-      const endPoint = this.findEndPoint(previous, current, child);
-      result = { ...startPoint, ...endPoint };
-    }
-    return result;
-  }
-
-  findStartPoint(previous: any, current: any, child: any) {
+  findStartPoint(previous: any, current: any) {
     try {
-      const result = {
-        startRootParent: '',
-        startRootParentIndex: 0,
-        startChildOfRootParent: '',
-        startChildOfRootParentIndex: 0,
-        startChild: '',
-      };
-      const isRootParentSame = previous.startRootParent === current.rootParent;
-      let isLessThan: boolean = false;
+      const isRootParentSame = previous.rootParent === current.rootParent;
       if (isRootParentSame) {
-        isLessThan = current.childOfRootParentIndex < previous.startChildOfRootParentIndex;
+        return current.childOfRootParentIndex < previous.childOfRootParentIndex;
       } else {
-        isLessThan = current.rootParentIndex < previous.startRootParentIndex;
+        return current.rootParentIndex < previous.rootParentIndex;
       }
-      result.startRootParent = isLessThan ? current.rootParent : previous.startRootParent;
-      result.startRootParentIndex = isLessThan ? current.rootParentIndex : previous.startRootParentIndex;
-      result.startChildOfRootParent = isLessThan ? current.childOfRootParent : previous.startChildOfRootParent;
-      result.startChildOfRootParentIndex = isLessThan ? current.childOfRootParentIndex : previous.startChildOfRootParentIndex;
-      result.startChild = isLessThan ? child : previous.startChild;
-      return result;
     } catch (ex) {
       throw ex;
     }
   }
 
-  findEndPoint(previous: any, current: any, child: any) {
+  findEndPoint(previous: any, current: any) {
     try {
-      const result = {
-        endRootParent: '',
-        endRootParentIndex: 0,
-        endChildOfRootParent: '',
-        endChildOfRootParentIndex: 0,
-        endChild: '',
-      };
-      const isRootParentSame = previous.endRootParent === current.rootParent;
-      let isGreatherThan: boolean = false;
+      const isRootParentSame = previous.rootParent === current.rootParent;
       if (isRootParentSame) {
-        isGreatherThan = current.childOfRootParentIndex > previous.endChildOfRootParentIndex;
+        return current.childOfRootParentIndex > previous.childOfRootParentIndex;
       } else {
-        isGreatherThan = current.rootParentIndex > previous.endRootParentIndex;
+        return current.rootParentIndex > previous.rootParentIndex;
       }
-      result.endRootParent = isGreatherThan ? current.rootParent : previous.endRootParent;
-      result.endRootParentIndex = isGreatherThan ? current.rootParentIndex : previous.endRootParentIndex;
-      result.endChildOfRootParent = isGreatherThan ? current.childOfRootParent : previous.endChildOfRootParent;
-      result.endChildOfRootParentIndex = isGreatherThan ? current.childOfRootParentIndex : previous.endChildOfRootParentIndex;
-      result.endChild = isGreatherThan ? child : previous.endChild;
-      return result;
     } catch (ex) {
       throw ex;
     }
@@ -322,6 +281,7 @@ export class ChainWithCSVTableComponent implements OnInit {
           displayName: `${uniqueId}`,
           virtualChild: true,
           needToPositioning: false,
+          commonChildPoint: existingChildren.commonChildPoint,
           displayEnum: 'drawVerticalLine'
         };
         children[findIndex] = Object.assign({}, newVirtualChild);
