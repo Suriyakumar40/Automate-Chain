@@ -209,13 +209,13 @@ app-split-nodes {
 	right: 50%;
 }
 
-.connector {
-	border: 1px solid #4c9c3c;
+.horizontal-connector {
+	border-top: 2px solid #4c9c3c;
     position: relative;
-	left: 50%;
+	// width: 50%;
 }
 
-.connector.reduce-width {
+.horizontal-connector.reduce-width {
 	left: 0%;
 	width: 50%;
 }

@@ -1,20 +1,18 @@
-Set,Child,Parent,DisplayName,Document Number,Executant Name,Claimant Name,DOR,Nature,Market value,Consideration value,SurveyNumbers,PropertySize
-1,A,None,A,3527,Ranganayagi Ammal,G. Kuppuraj (a) Kupparao,18-Nov-80,Conveyance,5##100,5##100,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,B,None,B,526,Indhirani## Rajamanickam## Mani## Munusamy,I. Jaysinghrajan,08-Mar-04,Power of Attorney Deed (Book 4),--,--,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,C,A,C,725,G. Kuppuraj (a) Kupparao## Kamatchi,D. Duraisingh,07-Mar-05,Power of Attorney Deed (Book 4),--,--,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,D,C,D,2084,G. Kuppuraj (a) Kupparao (P)## Kamatchi (P)## D. Duraisingh (A),S.R. Christopher,18-May-05,Sale Agreement,1##00##000,25##50##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,H,B,H,1312,G. Kuppuraj (a) Kupparao (P)## Kamatchi (P)## D. Duraisingh (A)## Indhirani (P)## Rajamanickam (P)## Mani (P)## Munusamy (P)## I. Jayasingh Rajan (A),T. Nagarajan,20-Apr-09,Conveyance Deed,1##80##000,50##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,H,C,H,1312,G. Kuppuraj (a) Kupparao (P)## Kamatchi (P)## D. Duraisingh (A)## Indhirani (P)## Rajamanickam (P)## Mani (P)## Munusamy (P)## I. Jayasingh Rajan (A),T. Nagarajan,20-Apr-09,Conveyance Deed,1##80##000,50##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,E,B,E,2374,Indhirani (P)## Rajamanickam (P)## Mani (P)## Munusamy (P)## I. Jayasingh Rajan (A),A. David,07-Jun-05,Sale Agreement,--,1##00##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,F,E,F,4090,Indhirani (P)## Rajamanickam (P)## Mani (P)## Munusamy (P)## I. Jayasingh Rajan (A),A. David,21-Oct-08,Cancellation Deed,--,--,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,G,D,G,4096,G. Kuppuraj (a) Kupparao (P)## Kamatchi (P)## Duraisingh (A),S.R. Christopher,21-Oct-08,Cancellation Deed,--,--,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,I,H,I,1291,T. Nagarajan,Five Star Business Credits Limited,18-Mar-11,Mortgage Deed,10##000,10##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,J,I,J,8331,Five Star Business Credits Limited,T. Nagarajan,14-Nov-14,Deed of Receipt,--,10##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,K,H,K,2992,T. Nagarajan,Vasantha,20-Apr-15,Mortgage Deed,--,50##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,L,H,L,3110,T. Nagarajan,M/S Hellocell Infratel Private Limited## Radhakrishnan,22-Apr-15,Power of Attorney Deed,--,--,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,M,L,M,9915,T. Nagarajan,M/S Hellocell Infratel Private Limited (P)## Deepak Kumar (A),22-Oct-21,Cancellation of POA Deed,--,--,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
-1,N,K,N,9916,Vasantha (P)## Deepak Kumar (A),T. Nagarajan,22-Oct-21,Deed of Receipt,--,50##000,1/1A## 2/2B## 3/3A## 4/4C## 5A## 5/6E,2.49 Acres##8.5 Cents##1.93 Acres##23 Ares##180 Sq.Ft.##486 Sq.ft##1015 Sq.ft
 ,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
+Set,Child,Parent,DisplayName,,,,,,,,,
+1,A,None,A,,,,,,,,,
+1,B,A,B,,,,,,,,,
+1,C,A,C,,,,,,,,,
+1,D,A,D,,,,,,,,,
+1,E,A,E,,,,,,,,,
+1,F,A,F,,,,,,,,,
+1,G,B,G,,,,,,,,,
+1,H,C,H,,,,,,,,,
+1,I,D,I,,,,,,,,,
+1,J,E,J,,,,,,,,,
+1,K,F,K,,,,,,,,,
+1,L,I,L,,,,,,,,,
+1,L,J,L,,,,,,,,,
+1,L,G,L,,,,,,,,,
+1,L,K,L,,,,,,,,,
+1,L,H,L,,,,,,,,,

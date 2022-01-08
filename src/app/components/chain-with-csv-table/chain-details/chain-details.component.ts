@@ -11,9 +11,11 @@ export class ChainDetailsComponent implements OnInit {
     @Input() data: any;
     public propertyNumberType = 'Survey Number';
     public nameLimit: number = 50;
+    public sizeSurveyNumberLimit: number = 20;
     public executantName: string = '';
     public claimantName: string = '';
-   
+    public propertySize: string = '';
+    public surveyNumber: string = '';
 
     constructor(private activatedRoute: ActivatedRoute, router: Router) {
     }
@@ -21,12 +23,14 @@ export class ChainDetailsComponent implements OnInit {
     ngOnInit(): void {
         this.data.marketValue = this.replaceString(this.data.marketValue);
         this.data.considerationValue = this.replaceString(this.data.considerationValue);
-        this.executantName = this.constructName(this.data.executantName, this.nameLimit);
-        this.claimantName = this.constructName(this.data.claimantName, this.nameLimit);
+        this.executantName = this.constructName(this.data.executantName, this.nameLimit, 'and others');
+        this.claimantName = this.constructName(this.data.claimantName, this.nameLimit, 'and others');
+        this.propertySize = this.constructName(this.data.propertySize, this.nameLimit, '...');
+        this.surveyNumber = this.constructName(this.data.surveyNumber, this.nameLimit, '...');
       
     }
 
-    constructName(name: string, limit: number): string {
+    constructName(name: string, limit: number, endText: string): string {
         if (name) {
             const nameReplace = this.replaceString(name);
             const splitName = nameReplace.split(', ');
@@ -38,9 +42,9 @@ export class ChainDetailsComponent implements OnInit {
                 let concatName = '';
                 for (const sname of splitName) {
                     const tempName = concatName ? `${concatName}, ${sname}` : sname;
-                    if (tempName.length >= this.nameLimit) {
+                    if (tempName.length >= limit) {
                         const result = concatName ? concatName : tempName;
-                        return `${result} and others`;
+                        return `${result} ${endText}`;
                     }
                     concatName = tempName;
                 }

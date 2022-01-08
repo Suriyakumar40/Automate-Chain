@@ -16,7 +16,9 @@ export class SplitNodesComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    counter(length: number) {
+    counter(children: Array<any>) {
+        const filterChildren = children ? children.filter(it => !it.needToPositioning) : [];
+        const length: number  = children ? children.length : 0;
         if (length === 0) {
             return new Array();
         }

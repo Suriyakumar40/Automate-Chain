@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ChainService } from 'src/app/services/chain.service';
 
-export type DisplayEnumType = 'show | hide | bottomLine';
+export type DisplayEnumType = 'show | drawHorizontalLine | drawVerticalLine';
+export type childPoint = 'start' | 'end';
 
 @Component({
   selector: 'app-chain-with-csv-table',
@@ -34,6 +35,7 @@ export class ChainWithCSVTableComponent implements OnInit {
             , executantName, claimantName, dor, nature, marketValue
             , considerationValue, surveyNumber, propertySize] = it ? it.split(',') : [];
           return {
+            index: index,
             rowIndex: 0,
             columnIndex: 0,
             set: set, // temporary
@@ -41,9 +43,8 @@ export class ChainWithCSVTableComponent implements OnInit {
             parent: parent,
             displayName: displayName,
             displayEnum: 'show',
-            sameChildren: [],
-            childrenCount: 0,
             virtualChild: false,
+            commonChildPoint: '',
             needToPositioning: false,
             parentLists: [],
             documentNumber: documentNumber,
@@ -65,29 +66,157 @@ export class ChainWithCSVTableComponent implements OnInit {
   }
 
   constructDataModel(items: Array<any>) {
-    if (!items || items.length === 0) {
-      return [];
-    }
-    const result: any = {};
-    for (const item of items) {
-      const child = item.child;
-      const parent = item.parent;
-      result[child] = result[child] ? result[child] : [];
-      if (result[child].length > 0) {
-        const parentLists = result[child];
-        const lastParent = parentLists[parentLists.length - 1];
-        const findParent = items.find(it => it.parent === lastParent && it.child === child);
-        findParent.displayEnum = 'hide';
+    try {
+      if (!items || items.length === 0) {
+        return [];
       }
-      item.parentLists = result[child];
-      result[child].push(parent);
+      const result: any = {};
+      const startandEndPoint: any = {};
+      for (const item of items) {
+        const child = item.child;
+        const parent = item.parent;
+        result[child] = result[child] ? result[child] : [];
+        if (result[child].length > 0) {
+          const previousParent = result[child][0];
+          startandEndPoint[child] = this.findCommonChildrenStartandEnd(previousParent, parent, child, items, startandEndPoint[child]);
+          const parentLists = result[child];
+          const lastParent = parentLists[parentLists.length - 1];
+          const findParent = items.find(it => it.parent === lastParent && it.child === child);
+          findParent.displayEnum = 'drawHorizontalLine';
+          findParent.needToPositioning = false;
+          item.needToPositioning = true;
+        }
+        item.parentLists = result[child];
+        result[child].push(parent);
+      }
+      return items;
+    } catch (ex) {
+      throw ex;
     }
-    return items;
+  }
+
+  findCommonChildrenStartandEnd(pParent: any, parent: any, child: any, items: Array<any>, startandEndPoint: any) {
+    try {
+      startandEndPoint = startandEndPoint ? startandEndPoint : {};
+      const plength = Object.keys(startandEndPoint).length;
+      if (plength === 0) {
+        const previous = this.findRootParentIndex(pParent, child, items);
+        startandEndPoint = this.findStartandEndPoint(previous, null, pParent);
+      }
+      const current = this.findRootParentIndex(parent, child, items);
+      startandEndPoint = this.findStartandEndPoint(startandEndPoint, current, parent);
+      return startandEndPoint;
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  findStartandEndPoint(previous: any, current: any, child: any) {
+    let result = {
+      startRootParent: '',
+      startRootParentIndex: 0,
+      startChildOfRootParent: '',
+      startChildOfRootParentIndex: 0,
+      startChild: '',
+      endRootParent: '',
+      endRootParentIndex: 0,
+      endChildOfRootParent: '',
+      endChildOfRootParentIndex: 0,
+      endChild: '',
+    };
+    if (!previous && !current) {
+      return result;
+    }
+    if (previous && !current) {
+      result.startRootParent = result.endRootParent = previous.rootParent;
+      result.startRootParentIndex = result.endRootParentIndex = previous.rootParentIndex;
+      result.startChildOfRootParent = result.endChildOfRootParent = previous.childOfRootParent;
+      result.startChildOfRootParentIndex = result.endChildOfRootParentIndex = previous.childOfRootParentIndex;
+      result.startChild = result.endChild = child;
+    } else {
+      const startPoint = this.findStartPoint(previous, current, child);
+      const endPoint = this.findEndPoint(previous, current, child);
+      result = { ...startPoint, ...endPoint };
+    }
+    return result;
+  }
+
+  findStartPoint(previous: any, current: any, child: any) {
+    try {
+      const result = {
+        startRootParent: '',
+        startRootParentIndex: 0,
+        startChildOfRootParent: '',
+        startChildOfRootParentIndex: 0,
+        startChild: '',
+      };
+      const isRootParentSame = previous.startRootParent === current.rootParent;
+      let isLessThan: boolean = false;
+      if (isRootParentSame) {
+        isLessThan = current.childOfRootParentIndex < previous.startChildOfRootParentIndex;
+      } else {
+        isLessThan = current.rootParentIndex < previous.startRootParentIndex;
+      }
+      result.startRootParent = isLessThan ? current.rootParent : previous.startRootParent;
+      result.startRootParentIndex = isLessThan ? current.rootParentIndex : previous.startRootParentIndex;
+      result.startChildOfRootParent = isLessThan ? current.childOfRootParent : previous.startChildOfRootParent;
+      result.startChildOfRootParentIndex = isLessThan ? current.childOfRootParentIndex : previous.startChildOfRootParentIndex;
+      result.startChild = isLessThan ? child : previous.startChild;
+      return result;
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  findEndPoint(previous: any, current: any, child: any) {
+    try {
+      const result = {
+        endRootParent: '',
+        endRootParentIndex: 0,
+        endChildOfRootParent: '',
+        endChildOfRootParentIndex: 0,
+        endChild: '',
+      };
+      const isRootParentSame = previous.endRootParent === current.rootParent;
+      let isGreatherThan: boolean = false;
+      if (isRootParentSame) {
+        isGreatherThan = current.childOfRootParentIndex > previous.endChildOfRootParentIndex;
+      } else {
+        isGreatherThan = current.rootParentIndex > previous.endRootParentIndex;
+      }
+      result.endRootParent = isGreatherThan ? current.rootParent : previous.endRootParent;
+      result.endRootParentIndex = isGreatherThan ? current.rootParentIndex : previous.endRootParentIndex;
+      result.endChildOfRootParent = isGreatherThan ? current.childOfRootParent : previous.endChildOfRootParent;
+      result.endChildOfRootParentIndex = isGreatherThan ? current.childOfRootParentIndex : previous.endChildOfRootParentIndex;
+      result.endChild = isGreatherThan ? child : previous.endChild;
+      return result;
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  findRootParentIndex(parent: any, child: any, items: Array<any>): any {
+    try {
+      const previousParent = items.find(it => it.child === parent);
+      if (previousParent && previousParent.parent === 'None') {
+        const childOfRootParent = items.find(it => it.parent === previousParent.child && it.child === child);
+        return {
+          rootParent: previousParent.child,
+          rootParentIndex: previousParent.index,
+          childOfRootParent: childOfRootParent.child,
+          childOfRootParentIndex: childOfRootParent.index,
+        };
+      } else if (previousParent) {
+        const childOfRootParent = this.findRootParentIndex(previousParent.parent, previousParent.child, items);
+        return childOfRootParent;
+      }
+    } catch (ex) {
+      throw ex;
+    }
   }
 
   constructParentAndChild(items: Array<any>) {
     try {
-
       // https://stackoverflow.com/questions/18017869/build-tree-array-from-flat-array-in-javascript
       if (!items || items.length === 0) {
         return [];
@@ -103,14 +232,11 @@ export class ChainWithCSVTableComponent implements OnInit {
         currentParent.children.push(current);
         current.rowIndex = this.incrementRowIndex(currentParent.rowIndex);
         current.columnIndex = this.incrementColumnIndex(current.rowIndex);
+        current.commonChildDestination = current.parentLists.length >= 2 ? 'start' : '';
         this.rcIndex[current.rowIndex] = current.columnIndex;
         // current.rowIndex = this.getRowIndex(result, current);
-        if (parent !== 'None') {
-          currentParent.childrenCount = currentParent.childrenCount + 1;
-        }
         if (result[child] && Object.keys(result[child]).length > 0) {
           result = this.createVirtualChildByRow(result, current);
-          current.needToPositioning = true;
           result[child] = current;
         } else {
           result[child] = current;
@@ -122,7 +248,6 @@ export class ChainWithCSVTableComponent implements OnInit {
     } catch (ex) {
       throw ex;
     }
-
   }
 
   createVirtualChildByRow(result: any, current: any) {
@@ -195,16 +320,13 @@ export class ChainWithCSVTableComponent implements OnInit {
           parent: findChild.parent,
           children: [existingChildren],
           displayName: `${uniqueId}`,
-          sameChildren: [],
-          childrenCount: 0,
           virtualChild: true,
           needToPositioning: false,
-          displayEnum: 'bottomLine'
+          displayEnum: 'drawVerticalLine'
         };
         children[findIndex] = Object.assign({}, newVirtualChild);
       }
       return children;
-
     } catch (ex) {
       throw ex;
     }
