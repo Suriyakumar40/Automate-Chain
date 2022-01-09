@@ -105,70 +105,68 @@ export class ChainWithCSVTableComponent implements OnInit {
     }
   }
 
-  findCommonChildrenStartandEnd(pParent: any, parent: any, child: any, items: Array<any>, startandEndPoint: any) {
+  findCommonChildrenStartandEnd(pParent: any, parent: any, child: any, items: Array<any>, existingPoint: any) {
     try {
-      startandEndPoint = startandEndPoint ? startandEndPoint : {};
-      const plength = Object.keys(startandEndPoint).length;
-      let previousStartParent, previousEndParent = '';
+      existingPoint = existingPoint ? existingPoint : {};
+      const plength = Object.keys(existingPoint).length;
       if (plength === 0) {
-        previousStartParent = previousEndParent = this.findRootParentIndex(pParent, child, items);
-        startandEndPoint['startParent'] = startandEndPoint['endParent'] = pParent;
-      } else {
-        previousStartParent = this.findRootParentIndex(startandEndPoint.startParent, child, items);
-        previousEndParent = this.findRootParentIndex(startandEndPoint.endParent, child, items);
+        existingPoint['startParent'] = existingPoint['endParent'] = pParent;
       }
-      const current = this.findRootParentIndex(parent, child, items);
-      const isStartChild = this.findStartPoint(previousStartParent, current);
-      const isEndChild = this.findEndPoint(previousEndParent, current);
-      startandEndPoint['startParent'] = isStartChild ? parent :  startandEndPoint['startParent'] ;
-      startandEndPoint['endParent'] = isEndChild ? parent :  startandEndPoint['endParent'] ;
-      return startandEndPoint;
+      const isStartChild = this.findStartingPoint(items, existingPoint['startParent'], parent, child);
+      const isEndChild = this.findEndingPoint(items, existingPoint['endParent'], parent, child);
+      existingPoint['startParent'] = isStartChild ? parent : existingPoint['startParent'];
+      existingPoint['endParent'] = isEndChild ? parent : existingPoint['endParent'];
+      return existingPoint;
     } catch (ex) {
       throw ex;
     }
   }
 
-  findStartPoint(previous: any, current: any) {
+  findStartingPoint(items: Array<any>, previousStartParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
     try {
-      const isRootParentSame = previous.rootParent === current.rootParent;
-      if (isRootParentSame) {
-        return current.childOfRootParentIndex < previous.childOfRootParentIndex;
+      const previous = this.findRootParent(items, previousStartParent, child, breakNode);
+      const current = this.findRootParent(items, currentParent, child, breakNode);
+      if (previous.parent === current.parent) {
+        return this.findStartingPoint(items, previousStartParent, currentParent, child, previous.parent);
       } else {
-        return current.rootParentIndex < previous.rootParentIndex;
-      }
-    } catch (ex) {
-      throw ex;
-    }
-  }
-
-  findEndPoint(previous: any, current: any) {
-    try {
-      const isRootParentSame = previous.rootParent === current.rootParent;
-      if (isRootParentSame) {
-        return current.childOfRootParentIndex > previous.childOfRootParentIndex;
-      } else {
-        return current.rootParentIndex > previous.rootParentIndex;
+        return current.index < previous.index;
       }
     } catch (ex) {
       throw ex;
     }
   }
 
-  findRootParentIndex(parent: any, child: any, items: Array<any>): any {
+  findEndingPoint(items: Array<any>, previousEndParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
     try {
-      const previousParent = items.find(it => it.child === parent);
-      if (previousParent && previousParent.parent === 'None') {
-        const childOfRootParent = items.find(it => it.parent === previousParent.child && it.child === child);
-        return {
-          rootParent: previousParent.child,
-          rootParentIndex: previousParent.index,
-          childOfRootParent: childOfRootParent.child,
-          childOfRootParentIndex: childOfRootParent.index,
-        };
-      } else if (previousParent) {
-        const childOfRootParent = this.findRootParentIndex(previousParent.parent, previousParent.child, items);
-        return childOfRootParent;
+      const previous = this.findRootParent(items, previousEndParent, child, breakNode);
+      const current = this.findRootParent(items, currentParent, child, breakNode);
+      if (previous.parent === current.parent) {
+        return this.findEndingPoint(items, previousEndParent, currentParent, child, previous.parent);
+      } else {
+        return current.index > previous.index;
       }
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  findRootParent(items: Array<any>, parent: any, child: any, breakNode: any): any {
+    try {
+      const result = { parent: '', index: 0 };
+      if (parent === breakNode) {
+        const childItem = items.find(it => it.child === child && it.parent === parent);
+        result.parent = childItem.parent;
+        result.index = childItem.index;
+      } else {
+        const previousParent = items.find(it => it.child === parent);
+        if (previousParent && previousParent.parent === breakNode) {
+          result.parent = previousParent.child;
+          result.index = previousParent.index;
+        } else if (previousParent) {
+          return this.findRootParent(items, previousParent.parent, child, breakNode);
+        }
+      }
+      return result;
     } catch (ex) {
       throw ex;
     }
