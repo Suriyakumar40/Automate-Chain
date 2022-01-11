@@ -1,5 +1,5 @@
 <td class="rightLine">&nbsp;</td>
-<td class="{{pIndex % 2 == 0 ? 'leftLine' : 'rightLine'}} topLine"
+<td class="{{displayLine(pIndex)}} topLine"
     *ngFor="let item of counter(children);let pIndex=index">
     &nbsp;
 </td>

@@ -10,6 +10,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 export class ChildrenWithCSVTableComponent implements OnInit {
     @Input() data: any;
+    @Input() splitLine: any;
     config: any;
     public showTreeBroken = false;
     public showChildTreeBroken = false;
@@ -23,27 +24,50 @@ export class ChildrenWithCSVTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const nodeDataDOM = document.getElementById(`node-data`);
-        const downLineDOM = document.getElementById(`downLine`);
-        const downLineHeight = downLineDOM && downLineDOM.offsetHeight > 0 ? downLineDOM.offsetHeight + 2 : 0;
-        this.vchildWidth = nodeDataDOM && `${nodeDataDOM.offsetWidth}px` || '';
-        this.vchildHeight = nodeDataDOM && `${nodeDataDOM.offsetHeight + 2}px` || '';
-    }
-
-    renderWidth(childItem: any) {
-        const nodeDataDOM = document.getElementById(`node-data`);
-        return nodeDataDOM && `${nodeDataDOM.offsetWidth}px` || ''
-        // const childDOM = document.getElementById(`child_${childItem.child}`);
-        // return childDOM && `${childDOM.offsetWidth}px` || '';
+        const nodeDataWidth = this.getNodeDataWidth();
+        const nodeDataHeight = this.getNodeDataHeight();
+        this.vchildWidth = `${nodeDataWidth}px`;
+        this.vchildHeight = nodeDataHeight ? `${nodeDataHeight + 2}px` : '';
     }
 
     adjustHorizontalLineByPoint(childItem: any) {
-        if (childItem.commonChildPoint === 'start') {
+        if (childItem.commonChildPoistion === 'start') {
             return { width: '50%', float: 'right' };
-        } else if (childItem.commonChildPoint === 'end') {
+        } else if (childItem.commonChildPoistion === 'end') {
             return { width: '50%', float: 'left' };
         }
         return { width: '100%' };
     }
-    
+
+    adjustVerticalLine(childItem: any) {
+        const nodeDataHeight = this.getNodeDataHeight();
+        const downLineHeight = this.getDownLineHeight();
+        const splitMergeLineHeight = this.getSplitOrMergeLineConnector();
+        if (childItem.displayEnum === 'commonChildConnector') {
+            return `${downLineHeight + nodeDataHeight + 2}px`
+        }
+        if (childItem.dummyVerticalLine) {
+            return `${downLineHeight + splitMergeLineHeight + 2}px`;
+        } 
+        return `${downLineHeight}px`;
+    }
+
+    getDownLineHeight() {
+        const downLineDOM = document.getElementById(`downLine`);
+        return downLineDOM && downLineDOM.offsetHeight > 0 ? downLineDOM.offsetHeight : 0
+    }
+
+    getNodeDataHeight() {
+        const nodeDataDOM = document.getElementById(`node-data`);
+        return nodeDataDOM && nodeDataDOM.offsetHeight > 0 ? nodeDataDOM.offsetHeight : 0
+    }
+
+    getNodeDataWidth() {
+        const nodeDataDOM = document.getElementById(`node-data`);
+        return nodeDataDOM && nodeDataDOM.offsetWidth > 0 ? nodeDataDOM.offsetWidth : 0
+    }
+
+    getSplitOrMergeLineConnector() {
+        return 24;
+    }
 }

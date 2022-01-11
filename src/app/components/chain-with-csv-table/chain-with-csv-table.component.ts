@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ChainService } from 'src/app/services/chain.service';
 
-export type DisplayEnumType = 'show | drawHorizontalLine | drawVerticalLine';
+export type DisplayEnumType = 'show | drawHorizontalLine | drawVerticalLine' | 'commonChildConnector';
 export type childPoint = 'start' | 'end';
+export type rowEnum = 'split' | 'merge' | 'multiplemerge';
 
 @Component({
   selector: 'app-chain-with-csv-table',
@@ -35,17 +36,15 @@ export class ChainWithCSVTableComponent implements OnInit {
             , executantName, claimantName, dor, nature, marketValue
             , considerationValue, surveyNumber, propertySize] = it ? it.split(',') : [];
           return {
-            index: index,
             rowIndex: 0,
-            columnIndex: 0,
             set: set, // temporary
             child: child,
             parent: parent,
             displayName: displayName,
             displayEnum: 'show',
             virtualChild: false,
-            needToPositioning: false,
-            commonChildPoint: '',
+            commonChildPoistion: '',
+            dummyVerticalLine: '',
             parentLists: [],
             documentNumber: documentNumber,
             executantName: executantName,
@@ -55,14 +54,52 @@ export class ChainWithCSVTableComponent implements OnInit {
             marketValue: marketValue,
             considerationValue: considerationValue,
             surveyNumber: surveyNumber,
-            propertySize: propertySize
+            propertySize: propertySize,
           };
         }).filter(it => parseInt(it.set) === this.set);
-        this.extractDataModel = this.constructDataModel(extractDataModel);
+        const reconstructDataModel = this.centerAlignCommonChild(extractDataModel);
+        this.extractDataModel = this.constructDataModel(reconstructDataModel);
         this.chainModel = this.constructParentAndChild(this.extractDataModel);
         console.log(this.chainModel);
       }
     });
+  }
+
+  centerAlignCommonChild(items: Array<any>) {
+    try {
+      if (!items || items.length === 0) {
+        return [];
+      }
+      const count = this.groupByWithCount(items);
+      const multipleItems = Object.keys(count).filter((key: any) => count[key] > 1);
+      for (const child of multipleItems) {
+        const children = items.filter(it => it.child === child);
+        const lastChild = children[children.length - 1];
+        const lastIndex = items.findIndex((it: any) => it.child === child && it.parent === lastChild.parent);
+        const cloneChild = Object.assign({}, children[0]);
+        const childrenLength = children && children.length ? children.length : 0
+        const isEven = this.numberIsEven(childrenLength);
+        const selectChildIndex = (childrenLength / 2) - 1;
+        const guid = this.generateGUID();
+        if (isEven && children[selectChildIndex]) {
+          const selectParent = children[selectChildIndex].parent;
+          const parentIndex = items.findIndex(it => it.child === selectParent);
+          const previousParent = parentIndex > -1 ? items[parentIndex].parent : null;
+          const virutalParentEntry = { child: guid, parent: previousParent, displayName: guid, virtualChild: true, displayEnum: 'commonChildConnector' };
+          items.splice(parentIndex + 1, 0, virutalParentEntry);
+          const virtualChildEntry = cloneChild;
+          virtualChildEntry['parent'] = guid;
+          items.splice(lastIndex + 2, 0, virtualChildEntry);
+        }
+      }
+      items = items.map((it: any, index) => {
+        it['index'] = index;
+        return it;
+      });
+      return items;
+    } catch (ex) {
+      throw ex;
+    }
   }
 
   constructDataModel(items: Array<any>) {
@@ -71,32 +108,26 @@ export class ChainWithCSVTableComponent implements OnInit {
         return [];
       }
       const result: any = {};
-      const startandEndPoint: any = {};
+      const poistion: any = {};
       for (const item of items) {
         const child = item.child;
         const parent = item.parent;
         result[child] = result[child] ? result[child] : [];
         if (result[child].length > 0) {
           const previousParent = result[child][0];
-          startandEndPoint[child] = this.findCommonChildrenStartandEnd(previousParent, parent, child, items, startandEndPoint[child]);
-          const parentLists = result[child];
-          const lastParent = parentLists[parentLists.length - 1];
-          const findParent = items.find(it => it.parent === lastParent && it.child === child);
-          findParent.displayEnum = 'drawHorizontalLine';
-          findParent.needToPositioning = false;
-          item.needToPositioning = true;
+          poistion[child] = this.findCommonChildrenStartandEnd(previousParent, parent, child, items, poistion[child]);
         }
         item.parentLists = result[child];
         result[child].push(parent);
       }
-      if (startandEndPoint) {
-        for (const child of Object.keys(startandEndPoint)) {
-          const startParent = startandEndPoint[child] ? startandEndPoint[child].startParent : null;
-          const endParent = startandEndPoint[child] ? startandEndPoint[child].endParent : null;
-          const findStartItem = items.find(it => it.parent === startParent && it.child === child);
-          findStartItem.commonChildPoint = 'start';
-          const findEndItem = items.find(it => it.parent === endParent && it.child === child);
-          findEndItem.commonChildPoint = 'end';
+      for (const child of Object.keys(poistion)) {
+        const commonChildren = items.filter(it => it.child === child);
+        for (const commonChild of commonChildren) {
+          commonChild.displayEnum = 'drawHorizontalLine';
+          commonChild.commonChildPoistion = this.getCommonChildPoistion(commonChild.parent, poistion[child]);
+          if (commonChild.commonChildPoistion === 'middle') {
+            commonChild.displayEnum = 'show';
+          }
         }
       }
       return items;
@@ -112,9 +143,11 @@ export class ChainWithCSVTableComponent implements OnInit {
       if (plength === 0) {
         existingPoint['startParent'] = existingPoint['endParent'] = pParent;
       }
-      const isStartChild = this.findStartingPoint(items, existingPoint['startParent'], parent, child);
-      const isEndChild = this.findEndingPoint(items, existingPoint['endParent'], parent, child);
+      const isStartChild = this.findStartingDestination(items, existingPoint['startParent'], parent, child);
+      const isEndChild = this.findEndingDestination(items, existingPoint['endParent'], parent, child);
+      const isMiddleChild = this.findMiddleDestination(items, existingPoint['startParent'], existingPoint['endParent'], parent, child);
       existingPoint['startParent'] = isStartChild ? parent : existingPoint['startParent'];
+      existingPoint['middleParent'] = isMiddleChild ? parent : existingPoint['middleParent'];
       existingPoint['endParent'] = isEndChild ? parent : existingPoint['endParent'];
       return existingPoint;
     } catch (ex) {
@@ -122,12 +155,12 @@ export class ChainWithCSVTableComponent implements OnInit {
     }
   }
 
-  findStartingPoint(items: Array<any>, previousStartParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
+  findStartingDestination(items: Array<any>, startParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
     try {
-      const previous = this.findRootParent(items, previousStartParent, child, breakNode);
+      const previous = this.findRootParent(items, startParent, child, breakNode);
       const current = this.findRootParent(items, currentParent, child, breakNode);
       if (previous.parent === current.parent) {
-        return this.findStartingPoint(items, previousStartParent, currentParent, child, previous.parent);
+        return this.findStartingDestination(items, startParent, currentParent, child, previous.parent);
       } else {
         return current.index < previous.index;
       }
@@ -136,14 +169,29 @@ export class ChainWithCSVTableComponent implements OnInit {
     }
   }
 
-  findEndingPoint(items: Array<any>, previousEndParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
+  findEndingDestination(items: Array<any>, endParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
     try {
-      const previous = this.findRootParent(items, previousEndParent, child, breakNode);
+      const previous = this.findRootParent(items, endParent, child, breakNode);
       const current = this.findRootParent(items, currentParent, child, breakNode);
       if (previous.parent === current.parent) {
-        return this.findEndingPoint(items, previousEndParent, currentParent, child, previous.parent);
+        return this.findEndingDestination(items, endParent, currentParent, child, previous.parent);
       } else {
         return current.index > previous.index;
+      }
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  findMiddleDestination(items: Array<any>, startParent: any, endParent: any, currentParent: any, child: any, breakNode: any = 'None'): any {
+    try {
+      const previousStartParent = this.findRootParent(items, startParent, child, breakNode);
+      const previousEndParent = this.findRootParent(items, endParent, child, breakNode);
+      const current = this.findRootParent(items, currentParent, child, breakNode);
+      if (previousStartParent.parent === current.parent || previousEndParent.parent === current.parent) {
+        return this.findMiddleDestination(items, startParent, endParent, currentParent, child, previousStartParent.parent);
+      } else {
+        return current.index < previousStartParent.index < previousEndParent.index;
       }
     } catch (ex) {
       throw ex;
@@ -178,7 +226,7 @@ export class ChainWithCSVTableComponent implements OnInit {
       if (!items || items.length === 0) {
         return [];
       }
-      const mapItems = items.reduce((result: any, current: any, index) => {
+      let mapItems = items.reduce((result: any, current: any, index) => {
         current = Object.assign({}, current);
         current.children = [];
         const parent = current.parent;
@@ -188,26 +236,21 @@ export class ChainWithCSVTableComponent implements OnInit {
         currentParent.children = currentParent.children ? currentParent.children : [];
         currentParent.children.push(current);
         current.rowIndex = this.incrementRowIndex(currentParent.rowIndex);
-        current.columnIndex = this.incrementColumnIndex(current.rowIndex);
-        current.commonChildDestination = current.parentLists.length >= 2 ? 'start' : '';
-        this.rcIndex[current.rowIndex] = current.columnIndex;
-        // current.rowIndex = this.getRowIndex(result, current);
+        this.rcIndex[current.rowIndex] = 1;
         if (result[child] && Object.keys(result[child]).length > 0) {
-          result = this.createVirtualChildByRow(result, current);
-          result[child] = current;
-        } else {
-          result[child] = current;
+          result = this.createVirtualNode(result, current);
         }
+        result[child] = current;
         return result;
       }, {});
-
+      mapItems = this.findDummbyVerticalLine(this.rcIndex, mapItems);
       return mapItems['None'].children;
     } catch (ex) {
       throw ex;
     }
   }
 
-  createVirtualChildByRow(result: any, current: any) {
+  createVirtualNode(result: any, current: any) {
     try {
       const parent = current.parent;
       const child = current.child;
@@ -230,7 +273,7 @@ export class ChainWithCSVTableComponent implements OnInit {
 
   calculateRowDistance(child: any, previousParent: any, currentParent: any) {
     try {
-      const currentParentIndex = this.getCurrentParentRowIndex(child, currentParent);
+      const [currentParentIndex] = this.getCurrentParentRowIndex(child, currentParent);
       const previousParentIndex = this.getPreviousParentRowIndex(previousParent);
       return currentParentIndex - previousParentIndex;
     } catch (ex) {
@@ -268,8 +311,8 @@ export class ChainWithCSVTableComponent implements OnInit {
       const findIndex = children.findIndex((it: any) => it.child === currentChild);
       if (findIndex > -1) {
         const findChild = children[findIndex];
-        const uniqueId = Math.random().toString(16).slice(8);
-        const existingChildren = this.updateRowColumnIndex(findChild);
+        const uniqueId = this.generateGUID();
+        const existingChildren = this.updateRowIndex(findChild);
         const newVirtualChild = {
           rowIndex: existingChildren.rowIndex - 1,
           set: 1,
@@ -278,8 +321,7 @@ export class ChainWithCSVTableComponent implements OnInit {
           children: [existingChildren],
           displayName: `${uniqueId}`,
           virtualChild: true,
-          needToPositioning: false,
-          commonChildPoint: existingChildren.commonChildPoint,
+          commonChildPoistion: existingChildren.commonChildPoistion,
           displayEnum: 'drawVerticalLine'
         };
         children[findIndex] = Object.assign({}, newVirtualChild);
@@ -290,20 +332,16 @@ export class ChainWithCSVTableComponent implements OnInit {
     }
   }
 
-  updateRowColumnIndex(child: any): any {
+  updateRowIndex(child: any): any {
     try {
       const renderChild = Object.assign({}, child);
       renderChild.rowIndex = this.incrementRowIndex(renderChild.rowIndex);
-      renderChild.columnIndex = this.incrementColumnIndex(renderChild.rowIndex);
-      this.rcIndex[renderChild.rowIndex] = renderChild.columnIndex;
       if (!renderChild.children || renderChild.children.length === 0) {
         return renderChild;
       }
       for (const node of renderChild.children) {
         node.rowIndex = this.incrementRowIndex(node.rowIndex);
-        node.columnIndex = this.incrementColumnIndex(node.rowIndex);
-        this.rcIndex[node.rowIndex] = node.columnIndex;
-        this.updateRowColumnIndex(node.children);
+        this.updateRowIndex(node.children);
       }
       return renderChild;
     } catch (ex) {
@@ -330,36 +368,108 @@ export class ChainWithCSVTableComponent implements OnInit {
 
   getCurrentParentRowIndex(child: any, currentParent: any) {
     try {
-      const items = currentParent.children.filter((it: any) => !it.virtualChild && it.child === child);
-      if (items && items.length > 0) {
-        return currentParent.rowIndex;
+      const findChild = currentParent.children.find((it: any) => !it.virtualChild && it.child === child);
+      if (findChild) {
+        return [currentParent.rowIndex, findChild.rowIndex];
       } else {
-        let rowIndex = 0;
+        let [parentRowIndex, childRowIndex]: any = [0, 0];
         for (const item of currentParent.children) {
-          rowIndex = this.getCurrentParentRowIndex(child, item);
+          [parentRowIndex, childRowIndex] = this.getCurrentParentRowIndex(child, item);
         }
-        return rowIndex;
+        return [parentRowIndex, childRowIndex];
       }
     } catch (ex) {
       throw ex;
     }
   }
 
-  getColumnIndexByChild(child: any, currentParent: any) {
+  findDummbyVerticalLine(rowIndex: any, mappedObj: any) {
     try {
-      const index = currentParent.children.findIndex((it: any) => !it.virtualChild && it.child === child);
-      if (index > -1) {
-        return currentParent.children[index].columnIndex;
-      } else {
-        let columnIndex = 0;
-        for (const item of currentParent.children) {
-          columnIndex = this.getColumnIndexByChild(child, item);
+      const rows = Object.keys(rowIndex);
+      for (const r of rows) {
+        const row = parseInt(r);
+        const rowItems = this.getItemsByRowIndex(row, mappedObj);
+        const filterSingleChildren = rowItems.filter(it => it.children.length === 1);
+        const findMultipleChildren = rowItems.filter(it => it.children.length > 1);
+        const singleChildren = [];
+        for (const childObj of filterSingleChildren) {
+          const child = childObj.child;
+          const commonChildObj = this.findCommonChildren(child, mappedObj);
+          const isCommonChild = commonChildObj ? commonChildObj.childRowIndex - childObj.rowIndex === 1 : false;
+          if (!isCommonChild) {
+            singleChildren.push(child)
+          }
         }
-        return columnIndex;
+        if (filterSingleChildren.length !== singleChildren.length || findMultipleChildren.length > 0) {
+          for (const skey of singleChildren) {
+            mappedObj[skey].dummyVerticalLine = true;
+          }
+        }
       }
+      return mappedObj;
     } catch (ex) {
       throw ex;
     }
+  }
+
+  // below function find the common children of the parent which passed as parameter
+  findCommonChildren(parent: any, mappedObj: any) {
+    try {
+      const parentObj = mappedObj[parent];
+      const children = parentObj.children && parentObj.children.length > 0 ? parentObj.children : [];
+      const result: any = {};
+      for (const node of children) {
+        const selectedNode = mappedObj[node.child];
+        const parentLists = selectedNode && selectedNode.parentLists ? selectedNode.parentLists : [];
+        const isParentExist = parentLists.length > 1 && parentLists.some((it: any) => it === parent);
+        if (isParentExist) {
+          const [parentRowIndex, childRowIndex] = this.getCurrentParentRowIndex(node.child, parentObj);
+          result['parent'] = node.parent;
+          result['child'] = node.child;
+          result['parentRowIndex'] = parentRowIndex;
+          result['childRowIndex'] = childRowIndex;
+        }
+      }
+      return result;
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  getItemsByRowIndex(rowIndex: any, mappedObj: any) {
+    try {
+      return Object.keys(mappedObj).map(k => {
+        const obj = mappedObj[k];
+        if (k !== 'None' && obj.rowIndex === rowIndex) {
+          return Object.assign({}, obj);
+        }
+      }).filter(it => it);
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
+  groupByWithCount(items: Array<any>) {
+    if (!items || items.length === 0) {
+      return null;
+    }
+    return items.reduce((previous, current) => {
+      const child = current.child;
+      const count = previous[child] ? previous[child] : 0
+      previous[child] = count + 1;
+      return previous;
+    }, {});
+  }
+
+  getCommonChildPoistion(parent: any, poistion: any) {
+    if (parent === poistion.startParent) {
+      return 'start';
+    } else if (parent === poistion.middleParent) {
+      return 'middle';
+    } else if (parent === poistion.endParent) {
+      return 'end';
+    }
+    return '';
   }
 
   getPreviousParent(child: any, result: any) {
@@ -371,9 +481,13 @@ export class ChainWithCSVTableComponent implements OnInit {
     return rowIndex > 0 ? rowIndex + 1 : 1
   }
 
-  incrementColumnIndex(rowIndex: number) {
-    const latestColumnIndex = this.rcIndex[rowIndex];
-    return latestColumnIndex > 0 ? latestColumnIndex + 1 : 1;
+  numberIsEven(number: any) {
+    number = parseInt(number);
+    return number % 2 === 0;
+  }
+
+  generateGUID() {
+    return Math.random().toString(16).slice(8);
   }
 }
 

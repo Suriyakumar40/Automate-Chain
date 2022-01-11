@@ -9,6 +9,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 export class SplitNodesComponent implements OnInit {
     @Input() children: any;
+    public connectorChildIndex: number = -1;
 
     constructor(private activatedRoute: ActivatedRoute, router: Router) {
     }
@@ -17,12 +18,21 @@ export class SplitNodesComponent implements OnInit {
     }
 
     counter(children: Array<any>) {
-        const filterChildren = children ? children.filter(it => !it.needToPositioning) : [];
-        const length: number  = children ? children.length : 0;
+        this.connectorChildIndex = children ? children.findIndex(it => it.displayEnum === 'commonChildConnector') : -1;
+        const length: number = children ? children.length : 0;
         if (length === 0) {
             return new Array();
         }
 
         return new Array((length * 2) - 2);
+    }
+
+    displayLine(pIndex: number) {
+        const roundOff = Math.round(pIndex / 2);
+        if (this.connectorChildIndex > -1 && this.connectorChildIndex === roundOff) {
+            return '';
+        } else {
+            return pIndex % 2 === 0 ? 'leftLine' : 'rightLine';
+        }
     }
 }
