@@ -34,5 +34,7 @@ export class SplitNodesComponent implements OnInit {
         } else {
             return pIndex % 2 === 0 ? 'leftLine' : 'rightLine';
         }
+        // return pIndex % 2 === 0 ? 'leftLine' : 'rightLine';
+
     }
 }

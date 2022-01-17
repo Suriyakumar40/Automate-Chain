@@ -16,13 +16,13 @@
                     </td>
                 </tr>
                 <!-- horizontal connector line vertical line -->
-                <tr class="lines"
+                <tr class="lines" id="{{childItem.parent}}_horizontal_{{childItem.child}}"
                     *ngIf="childItem.displayEnum === 'drawHorizontalLine' || childItem.commonChildPoistion === 'middle'">
                     <td colspan="2" [style.width]="vchildWidth">
                         <div class="topLine" [style]="adjustHorizontalLineByPoint(childItem)"> </div>
                     </td>
                 </tr>
-                <tr class="lines postioning" *ngIf="childItem.commonChildPoistion === 'middle'">
+                <tr class="lines" *ngIf="childItem.commonChildPoistion === 'middle'">
                     <td colspan="2">
                         <div class="downLine" id="downLine" style="height: 24px;"></div>
                     </td>

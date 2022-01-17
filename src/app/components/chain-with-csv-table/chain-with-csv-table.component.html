@@ -17,7 +17,7 @@
                 </tr>
                 <tr class="lines">
                     <td>
-                        <div class="downLine"></div>
+                        <div id="downLine" class="downLine"></div>
                     </td>
                 </tr>
                 <tr>
@@ -29,16 +29,20 @@
                             </app-split-nodes>
                             <!-- END -->
                             <tr>
-                                <td id="root_{{parent.child}}" colspan="2" *ngFor="let parent of chainModel;let colIndex=index">
+                                <td id="root_{{parent.child}}" colspan="2"
+                                    *ngFor="let parent of chainModel;let colIndex=index">
                                     <table id="parent_{{parent.child}}">
-                                        <tr>
+                                        <tr *ngIf="parent.displayEnum === 'show'">
                                             <td colspan="2">
                                                 <app-chain-details [data]="parent"></app-chain-details>
                                             </td>
                                         </tr>
-                                        <tr class="lines" *ngIf="parent.children.length > 0">
-                                            <td>
-                                                <div class="downLine"></div>
+                                        <tr style="page-break-inside: avoid;"
+                                            class="{{parent.displayEnum === 'commonChildConnector' ? '' : 'lines'}}"
+                                            *ngIf="parent.children.length > 0">
+                                            <td colspan="2">
+                                                <div class="downLine" id="data-downLine"
+                                                    [style.height]="adjustVerticalLine(parent)"></div>
                                             </td>
                                         </tr>
                                         <tr style="page-break-inside: avoid;" class="nodes xyz-parent"
